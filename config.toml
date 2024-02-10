@@ -1,5 +1,19 @@
 baseURL = 'http://nhefner.me/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Noah Hefner'
 
-theme = 'nhefner-website'
+theme = 'hugo-theme-m10c'
+
+
+[params]
+  author = "Noah Hefner"
+  description = "Software Engineer"
+  menu_item_separator = " - "
+  [[params.social]]
+    icon = "github"
+    name = "Github"
+    url = "https://github.com/noahhefner"
+  [[params.social]]
+    icon = "linkedin"
+    name = "Linkedin"
+    url = "https://www.linkedin.com/in/nhefner"
