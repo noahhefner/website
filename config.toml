@@ -8,6 +8,7 @@ theme = 'hugo-theme-m10c'
 [params]
   author = "Noah Hefner"
   description = "Software Engineer"
+  avatar = "images/avatar.jpg"
   menu_item_separator = " - "
   [[params.social]]
     icon = "github"
