@@ -1,15 +1,31 @@
 baseURL = 'https://noahhefner.info'
 languageCode = 'en-us'
 title = 'Noah Hefner'
-
 theme = 'hugo-theme-m10c'
 
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 2
 
 [params]
   author = "Noah Hefner"
   description = "Software Engineer"
   avatar = "images/avatar.jpg"
-  menu_item_separator = " - "
+  menu_item_separator = " | "
+  [params.style]
+    lightColor = "#c9c9c9"
+    darkestColor = "#242930"
+    darkColor = "#353b43"
+    lightestColor = "#ffffff"
+    primaryColor = "#57cc8a"
   [[params.social]]
     icon = "github"
     name = "Github"
