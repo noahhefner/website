@@ -1,7 +1,8 @@
 baseURL = 'https://noahhefner.info'
 languageCode = 'en-us'
 title = 'Noah Hefner'
-theme = 'hugo-theme-m10c'
+theme = 'website-theme'
+#theme = 'hugo-theme-m10c'
 
 [menu]
   [[menu.main]]
