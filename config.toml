@@ -3,19 +3,7 @@ languageCode = 'en-us'
 title = 'Noah Hefner'
 theme = 'hugo-theme-m10c'
 
-[menu]
-  [[menu.main]]
-    identifier = "home"
-    name = "Home"
-    url = "/"
-    weight = 1
-  [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
-    weight = 2
-
-[params]
+ [params]
   author = "Noah Hefner"
   description = "Software Engineer"
   avatar = "images/avatar.jpg"

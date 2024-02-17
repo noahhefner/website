@@ -9,8 +9,10 @@ img {
   width: 75%;
 }
 
-p {
-  text-indent: 2em;
+.app-container {
+  p {
+    text-indent: 2em;
+  }
 }
 
 .post-title {
@@ -39,6 +41,21 @@ p {
 
 .app-container {
   max-width: 80rem;
+}
+
+.app-header-title {
+  margin: 0.67em 0 0 0;
+}
+
+.app-header {
+  p {
+    font-size: 1.2em;
+    margin: 0.67em, 0 0 0;
+  }
+}
+
+.app-header-social {
+  margin: 0.67em;
 }
 
 .app-header-avatar {
