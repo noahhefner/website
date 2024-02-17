@@ -9,9 +9,38 @@ img {
   width: 75%;
 }
 
+p {
+  text-indent: 2em;
+}
+
 .post-title {
   font-size: 3rem;
   color: $lightest-color;
   text-align: center;
 }
 
+.post {
+  img {
+    border: 0.1rem solid $darkest-color;
+  }
+}
+
+.post-meta {
+  font-size: 1em;
+}
+
+.app-header-menu-item {
+  font-size: 1.2rem;
+}
+
+.posts-list-item-title {
+  font-size: 1.5rem;
+}
+
+.app-container {
+  max-width: 80rem;
+}
+
+.app-header-avatar {
+  border: 0.3rem solid $primary-color;
+}
