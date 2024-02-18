@@ -25,8 +25,8 @@ I also decided to take my docker-compose files a step further by converting them
 
 A few things I like about Ansible:
 
-- **Ansible Vault**: Ansible Vault is a mechanism for storing sensitive playbook information (API keys, usernames/passwords, etc.) in an encrypted text file. I also use the vault as a central location for all my playbook variables. I just like having one file to go to when I want to change something (which isn’t the intended use case for Vault, but it works for me because I’m the only one who uses these playbooks.)
-- **Templates**: A lot of my services have some sort of JSON/YAML/TOML configuration file to set some options within the service. With Ansible templates, I can use my vault variables within the configuration file and Ansible will automatically replace the variable with the value in my vault before copying the template file to the target machine. This is especially useful for services like Homepage that have a large number of configuration options.
+- **Ansible Vault**: Ansible Vault is a mechanism for storing sensitive playbook information (API keys, usernames/passwords, etc.) in an encrypted text file. I also use the vault as a central location for all my playbook variables. I just like having one file to go to when I want to change something (which isn’t the primary use case for Vault, but it works for me.)
+- **Templates**: Many services utilize some sort of JSON/YAML/TOML file to configure options within the service. With Ansibles Template mechanism, I can use my vault variables within the configuration file and Ansible will automatically fill in the values when the file is copied to the target machine. This is especially useful for services like Homepage that have a large number of configuration options.
 
 ## More Power
 
