@@ -51,6 +51,14 @@ user
 
 ## Wrap Up
 
-And that's it! That's my new notes app. The project can be found on my Github page. I'm open to taking pull requests from anyone who wants to contribute. I'm thrilled at the state of it now and I am planning to fully swap over from Flatnotes sometime in the near future (need to iron out a few more UI things first).
+And that's it! That's my new notes app. The project can be found on my Github page. I'm open to taking pull requests from anyone who wants to contribute. I'm thrilled at the state of it now and I am planning to fully swap over from Flatnotes sometime in the near future (need to iron out a few more UI things first). I have learned so much about web development in building this project and HTMX has been a huge reason why. I am already applying principals learned from this project in my professional work too, which is always great.
 
 Thanks for reading!
+
+## Notes / Additional Reading / Resources
+
+- [Papernote Repository](https://github.com/noahhefner/papernote)
+- [Hypermedia Systems Book](https://hypermedia.systems/hypermedia-reintroduction/)
+- [FULL Introduction To HTMX Using Golang](https://www.youtube.com/watch?v=x7v6SNIgJpE)
+- [The Most Important Lesson From HTMX](https://www.youtube.com/watch?v=f2wYvIVWR6M)
+- [HTMX X/Twitter Page](https://twitter.com/htmx_org)
