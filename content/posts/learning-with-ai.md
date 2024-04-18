@@ -4,10 +4,9 @@ date: 2024-03-08T18:46:40-05:00
 draft: true
 ---
 
-Over the past few months, I've been working on web-based note taking application as a side project. I chose Golang and HTMX as the core tooling for the project, simply because I wanted to learn Golang and HTMX is popular in web development spheres at the moment. I had a tiny bit of frontend experience from college projects and other small personal projects prior to starting this project, but zero experience in Golang. 
+I recently put out an article on my note-taking application side-project, [Papernote](https://github.com/noahhefner/papernote). This might be the first time I started a side project and actually saw it through to the minimum viable product (MVP) state. In prior side-projects, I would usually lose interest in the original idea or run into some technical issue that I could not solve and give up. This time was different though, and I atrribute that in large part to ChatGPT.
 
-Like many software developers, I have always struggled to follow through on my side projects. My Github repository was once full of repositories with a single commit made 4 years ago, never to see the light of day again. (I've since cleaned house and deleted many of them.) 
-
+Prior to working on Papernote, I had very limited frontend experience. College projects in React and other small personal projects in Vue.js were the extent of it. I am by no means a frontend web developer. I found ChatGPT to be super helpful for writing HTML and expecially CSS. It supercharged my frontend knowledge and allowed me to crank out code way faster than I would have overwise. With the latest wave of AI hype, this got me thinking more broadly about the role of AI in the developement cycle and how it can be best utilized both in a learning context and in the workplace.
 
 
 # Ideas
@@ -24,6 +23,7 @@ Like many software developers, I have always struggled to follow through on my s
 - allowed me to develop faster
 - inspired me to work on side projects more
 - helped me learn a lot about web development, docker
+- there is still no shortcuts to learning, but ai can help you learn faster
 - you still have to know stuff tho, sometimes it will give you a code suggestion that may technically work, but is not good practice or not the right implementation for your project (try to find an example of this)
 
 Articles
