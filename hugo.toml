@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://noahhefner.github.io/website/"
 languageCode = "en-us"
 theme = "terminal"
 pagination.pagerSize = 5
