@@ -1,5 +1,5 @@
 ---
-title: My Homelab Journey
+title: Homelab Journey
 date: 2024-01-10T00:40:04-07:00
 ---
 
@@ -17,7 +17,7 @@ It was around this time that I made a crucial decision about my homelab: **Docke
 
 I know some cool things can be done with hypervisors like ProxMox, but for me, I don’t think the additional system complexity is worth the potential upsides. (At least for the time being.) Not using a hypervisor reduces the number of failure points that I have to check when something goes wrong. I want my services to “just work” with minimal downtime. *If I have to spend more time maintaining my server than I do using my services, then I have missed the point of homelab entirely.*
 
-![homepage](/images/my-homelab-journey/homepage.png)
+![homepage](homepage.png)
 
 ## Ansible
 
@@ -32,15 +32,15 @@ A few things I like about Ansible:
 
 The Raspberry Pi is an amazing little computer, but it was beginning to struggle a bit (especially in Nextcloud) running all my containers. In the first of what would be a series of hardware transitions, I transformed my desktop gaming PC into an Ubuntu server. I moved my docker volumes directory to the new drive, ran my Ansible playbooks, and I was up and running again in no time. I purchased a mid-range NVIDIA GPU a few years back, which I utilized for hardware acceleration in [Jellyfin](https://jellyfin.org/), a recent addition to my container fleet.
 
-![more](/images/my-homelab-journey/more.gif)
+![more](more.gif)
 
 This worked well for a time, but I started to miss my desktop and my gaming monitor was collecting dust in the corner of my room. Inspired by an [LTT video on up-cycling old hardware as a home server](https://www.youtube.com/watch?v=zPmqbtKwtgw), I purchased a Dell Optiplex Desktop on Facebook Marketplace for $80. It has a 7th gen Intel i5 and 8GB of DDR3, a solid base on which I could build. I cleaned it up a bit, swapped the spinning disk drive for an SSD, migrated all my containers, and I was good to go. As a bonus, it came with a CD drive which I could use for ripping DVDs and CDs.
 
-![optiplex](/images/my-homelab-journey/optiplex.png)
+![optiplex](optiplex.png)
 
 This brings me to the current day where I am still running all my containers on the Optiplex. However, I have made a few upgrades, particularly in the networking department. The biggest upgrade was replacing my TP-Link router with a dedicated OPNsense box. In addition to performing the usual routing/firewall duties, it also runs a Wireguard instance, giving me access to my server from outside my local network. I also purchased a rack, a basic unmanaged network switch, and a cheap PDU from Amazon to round it out. (It is very much still a work in progress.)
 
-![rack](/images/my-homelab-journey/rack.jpg)
+![rack](rack.jpg)
 
 The Raspberry Pi I started with has now been repurposed as a Pihole. I set up the OPNsense box to forward all DNS requests to the Pi, which blocks advertisement and tracking requests. My TP-Link router/wireless access point had its router duties revoked, now handling just the latter. I’m still using the Optiplex for my docker containers, but I have a 4U chassis from [Sliger](https://www.sliger.com/) ready to accept some new server hardware. (I had originally planned to put the Optiplex internals in the 4U chassis, but it has a proprietary Dell motherboard and power supply, neither of which will install correctly into the chassis.) I plan to purchase some new hardware for the Sliger chassis and turn the Optiplex into an HTPC.
 

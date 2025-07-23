@@ -118,7 +118,7 @@ Now back to the second condition, `loop.index == limit`. This additional check i
 
 # Results
 
-![demo](/images/infinite-scroll-htmx/demo.gif)
+![demo](demo.gif)
 
 Here is the result! When the search is first executed, the first 10 results get loaded into the client's browser. The user scrolls down, eventually revealing the 10th result in the list, at which point HTMX triggers another GET request to fetch the next 10 results from the database. Those results are then appended to the end of the list. The user continues to scroll, incrementally loading results in sets of 10 until all the results from the search have been presented.
 
