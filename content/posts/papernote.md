@@ -1,6 +1,7 @@
 ---
 title: "Papernote"
 date: 2024-04-13T18:46:40-05:00
+draft: true
 ---
 
 I've tried a lot of note-taking applications. Ive used Google Keep, [Standard Notes](https://standardnotes.com/), [Joplin](https://joplinapp.org/), and more recently, [Flatnotes](https://github.com/Dullage/flatnotes). All of these options (minus Google Keep) have a few common traits. They are all self-hostable, open-source, and support markdown. Going forward, any note-taking application I use must have these three key features.
