@@ -1,9 +1,14 @@
-baseURL = 'https://noahhefner.info'
+baseURL = 'https://noahhefner.github.io/website'
 languageCode = 'en-us'
 title = 'Noah Hefner'
 theme = 'hugo-theme-m10c'
 
- [params]
+# For GitHub Pages
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
+
+[params]
   author = "Noah Hefner"
   description = "Software Engineer"
   avatar = "images/avatar.jpg"
