@@ -86,7 +86,7 @@ isort==5.13.2
 autoflake==2.3.1
 ```
 
-## Containerization: Take One
+## Take One - Containerization with Ubuntu
 
 With the basics of our project established, lets take a look at one way we can containerize this application. Consider the following `Dockerfile`:
 
@@ -226,11 +226,11 @@ You can see by the size field that the image is over half a gigabyte! **Surely**
 "Size": 589982747,
 ```
 
-## Take Two
+## Take Two - Choosing the right base image
 
-Even if you're new to containerization, there's a good chance you've already noticed the biggest red flag from our first attempt: using Ubuntu as the base image. 
+Even if you're new to containerization, there's a good chance you've already noticed the biggest red flag from our first attempt: using Ubuntu as the base image. When `apt` installs Python into Ubuntu, it will also pull in a ton of other system dependencies, resulting in the 500MB image.
 
-By chosing a larger base image, our final image is going to contain a bunch of system libraries and utilities that our Python application doesn't need at runtime. The first improvement we can make is to select a slimmer base image that contains a lot less bloat. A good choice would be the `python:3.13-slim` image. This image is based on Debian, has Python preinstalled, and contains much less bloat than the Ubuntu image. 
+A good starting point for reducing the final image size is to chose a slimmer base image. A good choice would be the `python:3.13-slim` image. This image is based on Debian, has Python preinstalled, and contains much less bloat than the Ubuntu image.
 
 Here's the updated `Dockerfile`:
 
@@ -258,12 +258,46 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-Building this image with Docker, we can already see some huge improvements. The build time has been reduced from 115 seconds to just 30 seconds. This is because the base image
+Building this image with Docker, we can already see some huge improvements. The build time has been reduced from 115 seconds to just 30 seconds.
 
 ```plaintext
 [+] Building 30.9s (11/11) FINISHED
 ```
 
+Additionally, we end up with a much smaller resulting image, 150MB compared with 500MB, since the `python:3.13-slim` image doesn't contain all the extra system libraries that get pulled in when installing Python on Ubuntu.
+
 ```plaintext
 "Size": 150981771,
 ```
+
+TODO: Compare python:3.13-slim with alpine + python install
+
+If you're containerizing a very simple Python project like the one in our example, this is honestly a pretty good setup already. However, there is still plenty of room for improvement.
+
+## Take Three - Using `uv` for dependency management
+
+TODO: Add uv link
+
+Up until this point, we've used `pip` to download all our dependency modules. While `pip` does get the job done, there exist more ergonomic and performant tools for installing Python modules. In this article, we will use `uv`, a Python project management utility developed by Astral that prides itself on fast dependency resolution. `uv` bundles functionality from a handful of Python utilities like `venv` and `pip` into one slim package.
+
+Astral *does* [publish thier own Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images), but I prefer to simply copy the `uv` binary from the distro-less `uv` image as described [here](https://docs.astral.sh/uv/guides/integration/docker/#installing-uv) in the `uv` documentation. This method allows me to update my containers base image independently of the `uv` binary, without relying on Astral to update their images.
+
+- updated dockerfile
+- show pyproject.toml file
+- show how dev dependencies get included in the image and show how to use the --no-dev flag
+
+## Take Four - Multi-Stage Build
+
+The last enhancement we're going to make is to break up the Dockerfile into multiple stages. By splitting the Dockerfile into a "build" stage and a "run" stage, we can exclude `uv` itself from the final docker image, which further reduce the image size.
+
+- updated dockerfile
+- show new image filesystem without uv
+
+## Result Summary
+
+| Image Description | Build Time | Size |
+|-------------------|------------|------|
+| Ubuntu Base Image | `115.1s` | `590MB` |
+| `python:3.13-slim` Base Image | `30.9s` | `151MB` |
+| `python:3.13-slim` Base Image + `uv` | `x.xs` | `xMB` |
+| `python:3.13-slim` Base Image + `uv` + Multi-Stage Build | `x.xs` | `xMB` |
