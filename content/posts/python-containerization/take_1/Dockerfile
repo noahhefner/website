@@ -17,7 +17,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements and install
-COPY requirements.txt .
+COPY take_1/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code

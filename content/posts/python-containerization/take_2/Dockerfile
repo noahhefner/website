@@ -1,23 +1,17 @@
-# Start from Ubuntu
-FROM ubuntu:24.04
-
-# Install Python and pip
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv
+# Start from Python Alpine image
+FROM python:3.13-alpine3.22
 
 # Set work directory
 WORKDIR /app
 
 # Create virtual environment
-RUN python3 -m venv /opt/venv
+RUN python -m venv /opt/venv
 
 # Ensure venv is used for all Python/Pip calls
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements and install
-COPY requirements.txt .
+COPY take_2/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
