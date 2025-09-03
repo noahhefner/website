@@ -13,6 +13,8 @@ all:
 	$(MAKE) four
 	$(MAKE) clean
 	$(MAKE) five
+	$(MAKE) clean
+	$(MAKE) six
 	@echo "Done!"
 
 clean:

@@ -18,22 +18,18 @@ What does it mean to "optimize" a Docker image? In my experience, there are thre
 
 1. **Build Time**: The amount of time it takes to build the container image. The longer it takes to build an image, the more of a pain in the neck it is to work with. If am image takes a long time to build, it becomes cumbersome to work with in a local development environment and can slow down CI-CD pipelines.
 2. **Image Size**: The total size of the image after it is built. Tangentally related to build time, big images can slow down CD if the server is constantly having to download large image files. Smaller images result in faster deployments.
-3. **Security Best Practices**: Containerization is not a security crutch. Containerized applications still need to follow security best practices to protect against bad actors.
+3. **Security Best Practices**: Containerization is not a crutch for poor security pratices. Containerized applications still need to follow security best practices to protect against bad actors.
 
 This article will focus more heavily on the first two points, but I will include some security notes as well. We will start with an "unoptimized" image, then progressively enhance it by reducing the build time, reducing the image size, and improving the security of the image.
 
+All code for this article is available in my website repo [here](https://github.com/noahhefner/website/tree/main/content/posts/python-containerization). If you're following along, all the commands in this article are run from the directory `content/posts/python-containerization` in that repository.
+
 ## Example Project
 
-To set the stage for this article, lets assume a very basic Python program that makes use of a few dependency modules. The program below does the following:
-
-- Creates a `structlog` configuration and initializes a logger object
-- Creates a connection to a MongoDB database
-- Creates a connection to RabbitMQ
-- Listens for a message from RabbitMQ
-- Upon consuming a message, write the message and a timestamp to a MongoDB database
+To set the stage, lets assume we want to containerize a very basic Python program:
 
 ```python
-# main.py
+# src/main.py
 
 import pika
 import pymongo
@@ -78,10 +74,31 @@ log.info("waiting_for_messages")
 channel.start_consuming()
 ```
 
-This program uses the `pika` package for interacting with RabbitMQ, `pymongo` for writing to the MongoDB database, and `structlog` for structured logging in `JSON` format. Let's also assume our Python project makes use of some developer dependencies. My favorites are `black` for code formatting, `isort` for sorting imports, and `autoflake` for removing unused imports. If we generate a `requirments.txt` file for the project, it would look like this:
+ The program the following:
+
+- Creates a `structlog` configuration and initializes a logger object
+- Creates a connection to a MongoDB database
+- Creates a connection to RabbitMQ
+- Listens for a message from RabbitMQ
+- Upon consuming a message, write the message and a timestamp to a MongoDB database
+
+This program is a bit contrived, but the important part is that it makes use of several dependencies that will need to be resolved before run time:
+
+- The `pika` package is used for interacting with a RabbitMQ server
+- The `pymongo` package is used for writing to a MongoDB database
+- The `structlog` package is used for structured logging in `JSON` format
+
+Let's also assume our Python project makes use of some developer dependencies like code linters and formaters:
+
+- `black` for code formatting
+- `isort` for sorting import statements
+- `autoflake` for removing unused imports
+
+If we use `pip` to manage our packages, we might generate a `requirments.txt` file for the project, which would look like this:
 
 ```plaintext
-# requirments.txt
+# take_1/requirments.txt
+
 pika==1.3.2
 pymongo==4.14.1
 structlog==25.4.0
@@ -90,13 +107,13 @@ isort==6.0.1
 autoflake==2.3.1
 ```
 
-
-
 ## Take One - Containerization with Ubuntu
 
 With the basics of our project established, lets take a look at one way we can containerize this application. Consider the following `Dockerfile`:
 
 ```dockerfile
+# take_1/Dockerfile
+
 # Start from Ubuntu
 FROM ubuntu:24.04
 
@@ -116,7 +133,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements and install
-COPY requirements.txt .
+COPY take_1/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -126,15 +143,15 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-In this Dockerfile, we start with Ubuntu 24.04 as the base image. Next, we install Python, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it. This is a standard setup for containerizing a Python application.
+In this Dockerfile, we start with Ubuntu 24.04 as the base image. Next, we install Python, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it. This is a standard flow for running a Python application.
 
-To build our image, we can use the `docker build` command, along with a few options. The `-f take_1/Dockerfile` flag is to specify which Dockerfile to use. The `-t take_one:latest` will tag the image as `take_one:latest`. The period at the end specifies the context for the build (the current working directory in this case.)
+To build our image, we can use the `docker build` command:
 
 ```sh
 docker build -f take_1/Dockerfile -t take_one:latest .
 ```
 
-Building the image with this Dockerfile, we get the following output:
+We get the following output:
 
 ```plaintext
 [+] Building 115.1s (12/12) FINISHED                                                          docker:default
@@ -163,7 +180,7 @@ Building the image with this Dockerfile, we get the following output:
  => => writing image sha256:7f305fbf83187c0a6ac0ec601f15ceab932f63433e63d5deec5cbb7020e02306            0.0s
 ```
 
-Notice from the first line of this output that the image took almost two minutes to build. That's quite a long time for such a simple script!
+Notice from the first line of this output that the image took almost **two minutes** to build.
 
 ```plaintext
 [+] Building 115.1s (12/12) 
@@ -232,7 +249,7 @@ We can also check the size of the image using the `docker image inspect` command
 ]
 ```
 
-You can see by the size field that the image is over half a gigabyte! **Surely** we can do better than that.
+You can see by the `Size` field (measured in bytes) that the image is over **half a gigabyte**! *Surely* we can do better than that.
 
 ```json
 "Size": 589982747
@@ -240,13 +257,15 @@ You can see by the size field that the image is over half a gigabyte! **Surely**
 
 ## Take Two - Choosing the right base image
 
-Even if you're new to containerization, there's a good chance you've already noticed the biggest red flag from our first attempt: using Ubuntu as the base image. When `apt` installs Python into Ubuntu, it will also pull in a ton of other system dependencies, resulting in the 500MB image.
+Even if you're new to containerization, there's a good chance you've already noticed the biggest red flag from our first attempt: using Ubuntu as the base image. When `apt` installs Python into Ubuntu, it will also pull in a ton of other packages, resulting in the 500MB image.
 
 A good first step to reduce the overall image size is to **chose a slim base image**. For this article, I will use the `python:3.13-alpine3.22` image. This is an Alpine-based image with Python preinstalled. This image is very small and should result in a big reduction in build time.
 
 Lets rebase our `Dockerfile` on `python:3.13-alpine3.22`:
 
 ```dockerfile
+# take_2/Dockerfile
+
 # Start from alpine image
 FROM python:3.13-alpine3.22
 
@@ -276,13 +295,13 @@ We can build the image with the following command:
 docker build -f Dockerfile.take_2 -t take_two:latest .
 ```
 
-We can already see some huge improvements in our output. The build time has been reduced from 115 seconds to just 42 seconds.
+We can already see some huge improvements in our output. The build time has been reduced from 115 seconds to just 41 seconds. (I will omit the rest of the build logs from this point forward for brevity.)
 
 ```plaintext
 [+] Building 40.9s (11/11) FINISHED
 ```
 
-Additionally, we end up with a much smaller resulting image, just 76MB:
+Additionally, we end up with a much smaller resulting image, just 76MB. (Also omitting irrelevant information from the `docker inspect` command from this point forward for brevity.)
 
 ```json
 "Size": 76136781
@@ -299,6 +318,8 @@ Astral *does* [publish thier own Docker images](https://docs.astral.sh/uv/guides
 Here's what our `Dockerfile` looks like after swapping `pip` for `uv`:
 
 ```dockerfile
+# take_3/Dockerfile
+
 # Start from Python Alpine image
 FROM python:3.13-alpine3.22
 
@@ -327,10 +348,11 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-Note that I have also swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more more flexible than a `requirements.txt` file.
+Notice that I have also swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more more flexible than a `requirements.txt` file. Along with some other metadata about the project, it also contains a list of dependencies, just like `requirements.txt`.
 
 ```toml
-# pyproject.toml
+# take_4/pyproject.toml
+
 [project]
 name = "python-container-article"
 version = "0.1.0"
@@ -350,7 +372,7 @@ dependencies = [
 We can build the image with the following command:
 
 ```sh
-docker build -f Dockerfile.take_2 -t take_two:latest .
+docker build -f Dockerfile.take_3 take_three:latest .
 ```
 
 We see a smaller, but still significant reduction in build time:
@@ -359,7 +381,7 @@ We see a smaller, but still significant reduction in build time:
 [+] Building 27.3s (14/14) FINISHED
 ```
 
-The size of the image did increase a fair bit from the previous iteration, but we will come back to that later.
+The size of the image actually increase a fair bit, 101MB up from 76MB in the previous iteration, but we will revisit this in take five.
 
 ```json
 "Size": 101297013
@@ -385,16 +407,11 @@ blib2to3                         packaging-25.0.dist-info         structlog-25.4
 bson                             pathspec                         test_autoflake.py
 ```
 
-We can rework our `pyproject.toml` file to use [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. Using `uv`, we can remove and reinstall these modules into the `dev` dependency group using the following commands:
-
-```sh
-uv remove black isort autoflake
-uv add --dev black isort autoflake
-```
-
-The `--dev` flag will add those modules to a dependency group called `dev` containing those three modules. Here is the updated `pyproject.toml` file:
+We can rework our `pyproject.toml` file to use [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to setup dependency groups in this article, but here is what the updated `pyproject.toml` file would look like:
 
 ```toml
+# take_4/pyproject.toml
+
 [project]
 name = "python-container-article"
 version = "0.1.0"
@@ -418,6 +435,8 @@ dev = [
 To exclude the `dev` dependency group modules from the final image, we can add the `--no-group dev` flag to our `uv sync` command.
 
 ```diff
+# take_4/Dockerfile
+
 - RUN uv sync --no-cache
 + RUN uv sync --no-cache --no-group dev
 ```
@@ -458,6 +477,8 @@ We've removed unnessessary Python packages, but there is still more we can remov
 At runtime, there is no need for `uv`, so it is safe (and good practice) to omit the binary from our final image. We can do this by splitting our Dockerfile into a [multi-stage build](https://docs.docker.com/build/building/multi-stage/). 
 
 ```dockerfile
+# take_5/Dockerfile
+
 # -----------------------
 # Stage 1: Build
 # -----------------------
@@ -535,9 +556,11 @@ root
 
 This is [considered bad practice](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is compromised, the attacker would have root access to all the resources allocated to the container. As a safegaurd, it is considered best practice to create a non-root user and execute the container as that user.
 
-In our Dockerfile, we can update the runner stage to create a new user and execute our script as that user.
+In our Dockerfile, we can update the `runner` stage to create a new user and execute our script as that user.
 
 ```dockerfile
+# take_6/Dockerfile
+
 # -----------------------
 # Stage 1: Build
 # -----------------------
@@ -596,11 +619,14 @@ demo
 /app $ 
 ```
 
-## Result Summary
+## Wrap Up
 
-| Image Description | Build Time | Size |
-|-------------------|------------|------|
-| Ubuntu Base Image | `115.1s` | `590MB` |
-| `python:3.13-slim` Base Image | `30.9s` | `151MB` |
-| `python:3.13-slim` Base Image + `uv` | `x.xs` | `xMB` |
-| `python:3.13-slim` Base Image + `uv` + Multi-Stage Build | `x.xs` | `xMB` |
+In this article, we examined several ways to optimize Docker images for running Python applications. By reducing the overall image size and prioritizing shorter build times, we were able to construct a compact and secure Docker image that is well suited for Python code bases.
+
+In summary:
+
+- Prefer **lightweight images** like `python:alpine` for the image base. This keeps the image size down by excluding libraries, binaries, and packages that are not needed at run time.
+- Make use of **modern Python project tools** like `uv` to speed up dependency downloads.
+- Be sure to **exclude development tooling** like code formatters and linters from the final image. `uv` makes this easy with dependency groups.
+- Utilize **multi-stage builds** to cleanly separate the construction of the virtual environment from the execution of the Python script.
+- Use a **non-root user** to make it harder for bad actors to gain unauthorized root access to the container resources.
