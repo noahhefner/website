@@ -1,8 +1,5 @@
-# Start from Python Alpine image
-FROM python:3.13-alpine3.22
-
-# Copy the uv binary from the distroless uv image
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+# Start from uv image
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 # Set work directory
 WORKDIR /app

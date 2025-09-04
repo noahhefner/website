@@ -12,17 +12,17 @@ hideComments = false
 draft = true
 +++
 
-In my day job, I have recently been working a lot with Docker containers that run Python applications. This has led me down a deep rabbit hole of optimizing these Docker container images. In this article, I will attempt to document the journey that I went on to achieve, in my opinion, a pretty solid approach for containerizing Python applications.
+In my day job, I’ve been spending a lot of time working with Docker containers that run Python applications. Along the way, I found myself digging deep into how to optimize these Docker images. In this article, I’ll walk through the steps I took to build what I think is a solid approach to containerizing Python applications.
 
-What does it mean to "optimize" a Docker image? In my experience, there are three key focus areas when it comes to containerizaiton:
+What does it mean to optimize a Docker image? I see three main focus areas in containerization:
 
-1. **Build Time**: The amount of time it takes to build the container image. The longer it takes to build an image, the more of a pain in the neck it is to work with. If am image takes a long time to build, it becomes cumbersome to work with in a local development environment and can slow down CI-CD pipelines.
-2. **Image Size**: The total size of the image after it is built. Tangentally related to build time, big images can slow down CD if the server is constantly having to download large image files. Smaller images result in faster deployments.
-3. **Security Best Practices**: Containerization is not a crutch for poor security pratices. Containerized applications still need to follow security best practices to protect against bad actors.
+1. **Build Time**: The amount of time it takes to build the container image. The longer it takes to build an image, the more of a headache it is to work with. If an image takes a long time to build, it becomes cumbersome to work with in a local development environment and can slow down CI-CD pipelines.
+2. **Image Size**: The total size of the image after it is built. Tangentially related to build time, large images can slow down CD if the server is constantly downloading large image files. Smaller images result in faster deployments.
+3. **Security Best Practices**: Containerization is not a crutch for poor security practices. Container security presents unique challenges and requires its own set of best practices.
 
-This article will focus more heavily on the first two points, but I will include some security notes as well. We will start with an "unoptimized" image, then progressively enhance it by reducing the build time, reducing the image size, and improving the security of the image.
+This article will focus more heavily on the first two points, but I will include some security notes as well. We will start with an “unoptimized” image, then progressively enhance it by reducing the build time, reducing the image size, and improving the security of the image.
 
-All code for this article is available in my website repo [here](https://github.com/noahhefner/website/tree/main/content/posts/python-containerization). If you're following along, all the commands in this article are run from the directory `content/posts/python-containerization` in that repository.
+All code for this article is available in my GitHub website repository [here](https://github.com/noahhefner/website/tree/main/content/posts/python-containerization). If you're following along, all the commands in this article are run from the directory `content/posts/python-containerization` in that repository.
 
 ## Example Project
 
@@ -74,7 +74,7 @@ log.info("waiting_for_messages")
 channel.start_consuming()
 ```
 
- The program the following:
+ This program does the following:
 
 - Creates a `structlog` configuration and initializes a logger object
 - Creates a connection to a MongoDB database
@@ -82,7 +82,7 @@ channel.start_consuming()
 - Listens for a message from RabbitMQ
 - Upon consuming a message, write the message and a timestamp to a MongoDB database
 
-This program is a bit contrived, but the important part is that it makes use of several dependencies that will need to be resolved before run time:
+This program is a bit contrived, but the important part is that it makes use of several dependencies that will need to be resolved before run time.
 
 - The `pika` package is used for interacting with a RabbitMQ server
 - The `pymongo` package is used for writing to a MongoDB database
@@ -307,24 +307,25 @@ Additionally, we end up with a much smaller resulting image, just 76MB. (Also om
 "Size": 76136781
 ```
 
-For very small applications with few dependencies, this setup is pretty solid. However, for big projects that have lots of dependencies, there is still room for improvement. Next, we will swap `pip` for a faster dependency resolution tool for some additional speed gains.
+From a security perspective, we're also reducing our attack surface. By stripping away unnecessary packages, we leave fewer potential vulnerabilities inside the container. This is one of the big advantages of using purpose-built base images like `python:alpine` or `python:slim`—they’re designed to be lightweight, fast to build, and easier to secure.
 
-## Take Three - Using [`uv`](https://github.com/astral-sh/uv) for dependency management
+For small applications with minimal dependencies, this `Dockerfile` is already quite solid. For larger projects with many dependencies, however, there’s still room for improvement. In the next step, we’ll swap out pip for a faster dependency resolution tool to gain some additional speed.
 
-Up until this point, we've used `pip` to download all our dependency modules. While `pip` does get the job done, there exist more ergonomic and performant tools for installing Python modules. In this article, we will use `uv`, a Python project management utility developed by [Astral](https://astral.sh/) that prides itself on fast dependency resolution. `uv` bundles functionality from a handful of Python utilities like `venv` and `pip` into one slim package.
+## Take Three - Speeding Up Dependency Downloads
 
-Astral *does* [publish thier own Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images), but I prefer to simply copy the `uv` binary from the distro-less `uv` image as described [here](https://docs.astral.sh/uv/guides/integration/docker/#installing-uv) in the `uv` documentation. This method allows me to update my containers base image independently of the `uv` binary, without relying on Astral to update their images.
+So far, we have used `pip` to fetch all the dependencies for our virtual environment. While `pip` does get the job done, it is slow and inefficient. One way we can speed up our build time is by speeding up the dependency downloads.
 
-Here's what our `Dockerfile` looks like after swapping `pip` for `uv`:
+Enter [`uv`](https://docs.astral.sh/uv/). `uv` is a modern Python project management utility developed by [Astral](https://astral.sh/) that replaces `pip`, `pip-tools`, `pipx`, `poetry`, `pyenv`, `twine`, `virtualenv`, and more. Astral claims that `uv` is "10-100x faster than `pip`." By swapping `pip` for `uv`, our Python dependencies will be downloaded much faster and our image build time should go down significantly. (Even if you aren't containerizing your Python application, `uv` is much more ergonomic from a developer experience perspective than traditional tools.)
+
+To replace `pip` with `uv` in our Dockerfile, we can rebase our Dockerfile onto one of [Astrals Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images). For this article, we will use `ghcr.io/astral-sh/uv:python3.13-alpine` which is essentially the `python:3.13-alpine` image with `uv` installed on top.
+
+Here's what our `Dockerfile` looks like after the update:
 
 ```dockerfile
 # take_3/Dockerfile
 
-# Start from Python Alpine image
-FROM python:3.13-alpine3.22
-
-# Copy the uv binary from the distroless uv image
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+# Start from uv image
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 # Set work directory
 WORKDIR /app
@@ -348,7 +349,7 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-Notice that I have also swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more more flexible than a `requirements.txt` file. Along with some other metadata about the project, it also contains a list of dependencies, just like `requirements.txt`.
+Notice that I have swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more more flexible than a `requirements.txt` file. Along with some other metadata about the project, it also contains a list of dependencies, just like `requirements.txt`.
 
 ```toml
 # take_4/pyproject.toml
@@ -375,39 +376,23 @@ We can build the image with the following command:
 docker build -f Dockerfile.take_3 take_three:latest .
 ```
 
-We see a smaller, but still significant reduction in build time:
+Our build time is cut (almost) in half:
 
 ```
-[+] Building 27.3s (14/14) FINISHED
+[+] Building 25.0s (11/11) FINISHED
 ```
 
-The size of the image actually increase a fair bit, 101MB up from 76MB in the previous iteration, but we will revisit this in take five.
+The size of the image actually increase a fair bit, 105MB up from 76MB in the previous iteration, but we will revisit this in take five.
 
 ```json
-"Size": 101297013
+"Size": 104666309
 ```
 
 ## Take Four - Removing Developer Dependencies
 
-Our `pyproject.toml` file contains a list of all the dependencies in our project, even dependencies that are only used for development and are not needed at run time such as `black`, `isort`, and `autoflake`. Running a shell in the image and inspecting the virtual environment, we can see that those modules are indeed being included in the final image.
+Our `pyproject.toml` file contains a list of all the dependencies in our project, even dependencies that are only used for development such as `black`, `isort`, and `autoflake`. With our current `pyproject.toml` file, these modules will be included in the final image. These modules will unneccesssarily increase the size of the final image.
 
-```plaintext
-/app/.venv/lib/python3.12/site-packages # ls
-LICENSE                          click                            pathspec-0.12.1.dist-info
-README.md                        click-8.2.1.dist-info            pika
-_black_version.py                dns                              pika-1.3.2.dist-info
-_virtualenv.pth                  dnspython-2.7.0.dist-info        platformdirs
-_virtualenv.py                   gridfs                           platformdirs-4.4.0.dist-info
-autoflake-2.3.1.dist-info        isort                            pyflakes
-autoflake.py                     isort-6.0.1.dist-info            pyflakes-3.4.0.dist-info
-black                            mypy_extensions-1.1.0.dist-info  pymongo
-black-25.1.0.dist-info           mypy_extensions.py               pymongo-4.14.1.dist-info
-blackd                           packaging                        structlog
-blib2to3                         packaging-25.0.dist-info         structlog-25.4.0.dist-info
-bson                             pathspec                         test_autoflake.py
-```
-
-We can rework our `pyproject.toml` file to use [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to setup dependency groups in this article, but here is what the updated `pyproject.toml` file would look like:
+We can rework our `pyproject.toml` file to take advantage of [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to setup dependency groups in this article, but here is what the updated `pyproject.toml` file would look like:
 
 ```toml
 # take_4/pyproject.toml
@@ -432,7 +417,7 @@ dev = [
 ]
 ```
 
-To exclude the `dev` dependency group modules from the final image, we can add the `--no-group dev` flag to our `uv sync` command.
+Notice how the development dependencies have been moved to a dependency group called `dev`. To exclude the `dev` dependency group modules from the final image, we can add the `--no-group dev` flag to our `uv sync` command. This will instruct `uv` not to download the dependencies from the `dev` group.
 
 ```diff
 # take_4/Dockerfile
@@ -441,40 +426,29 @@ To exclude the `dev` dependency group modules from the final image, we can add t
 + RUN uv sync --no-cache --no-group dev
 ```
 
-Now when we inspect the virtual environment inside the image, we don't have those development-only dependencies anymore.
+We can build the image with the following command:
 
-```plaintext
-/app/.venv/lib/python3.12/site-packages # ls
-_virtualenv.pth             dnspython-2.7.0.dist-info   pymongo
-_virtualenv.py              gridfs                      pymongo-4.14.1.dist-info
-bson                        pika                        structlog
-dns                         pika-1.3.2.dist-info        structlog-25.4.0.dist-info
+```sh
+docker build -f Dockerfile.take_4 take_four:latest .
 ```
 
-We also get a small improvement in build time:
+We shave a few seconds off the build time:
 
 ```plaintext
-[+] Building 24.3s (14/14) FINISHED
+[+] Building 22.8s (11/11) FINISHED
 ```
 
-And the image size is reduced from take three:
+The image size is reduced by a few MB:
 
 ```json
-"Size": 98975390
+"Size": 102344686
 ```
 
-## Take Five - Removing Unnecessary Tools
+## Take Five - Removing Build Tools
 
-We've removed unnessessary Python packages, but there is still more we can remove. Since we're using a single stage Dockerfile, the `uv` binary is included in the final image. We can see this by executing a shell on our image from the previous section and inspecting the `/bin` directory.
+In Take Three, we sped up the dependency resolution process by swapping `pip` for `uv`. While this did reduce the build time, it also **increased** the total image size. This is because the `uv` binary itself is ~40MB in size at the time of writing. Ironically, we can reduce the total image size by *removing* `uv` from the image. We only need `uv` to configure the virtual environment, so we can safely remove it from the final image.
 
-```plaintext
-/app # cd /bin
-/bin # ls -al | grep uv
--rwxr-xr-x    1 root     root      45564832 Aug 28 21:00 uv
-/bin # 
-```
-
-At runtime, there is no need for `uv`, so it is safe (and good practice) to omit the binary from our final image. We can do this by splitting our Dockerfile into a [multi-stage build](https://docs.docker.com/build/building/multi-stage/). 
+We can accomplish this by splitting our Dockerfile into two stages. This strategy is commonly referred to as a [multi-stage build](https://docs.docker.com/build/building/multi-stage/):
 
 ```dockerfile
 # take_5/Dockerfile
@@ -482,10 +456,7 @@ At runtime, there is no need for `uv`, so it is safe (and good practice) to omit
 # -----------------------
 # Stage 1: Build
 # -----------------------
-FROM python:3.13-alpine3.22 AS builder
-
-# Copy the uv binary from the distroless uv image
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+FROM ghcr.io/astral-sh/uv:python3.13-alpine AS builder
 
 # Set work directory
 WORKDIR /app
@@ -493,15 +464,12 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Ensure venv is used for all Python/Pip calls
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Copy requirements and install dependencies
+# Install dependencies
 COPY take_5/pyproject.toml .
 RUN uv sync --no-cache --no-group dev
 
 # -----------------------
-# Stage 2: Runtime
+# Stage 2: Run
 # -----------------------
 FROM python:3.13-alpine3.22 AS runner
 
@@ -521,9 +489,9 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-The first stage of this Dockerfile is the "build" stage. In this stage, we pull in the `uv` binary, create the virtual environment, and download our dependencies.
+The first stage of this Dockerfile is the "builder" stage. In this stage, we create the virtual environment, and download our dependencies.
 
-The second stage of the Dockerfile is the "run" stage. Since we're stating this stage from a bare `python:alpine` image, we don't inherit the `uv` binary from the first stage. In this stage, we simply copy over the virtual environment files that were created in the build stage and execute the script.
+The second stage of the Dockerfile is the "runner" stage. Since we're stating this stage from a bare `python:alpine` image, we don't inherit the `uv` binary from the first stage. In this stage, we simply copy over the virtual environment files that were created in the builder stage and execute the script.
 
 We can build the image with the following command:
 
@@ -534,7 +502,7 @@ docker build -f take_5/Dockerfile -t take_five:latest .
 Build time remains roughly the same:
 
 ```plaintext
-[+] Building 24.1s (16/16) FINISHED
+[+] Building 18.8s (15/15) FINISHED
 ```
 
 The overall image size, however, has been cut down to under 50MB:
@@ -543,9 +511,11 @@ The overall image size, however, has been cut down to under 50MB:
 "Size": 49673398
 ```
 
-## Take Six - Security
+Just like switching to a smaller base image helped reduce our attack surface, stripping out `uv` from the final image gives us another security win. Every binary inside a container is a potential entry point for attackers, and in this case `uv` isn’t needed at runtime. By keeping it only in the `builder` stage, we minimize the number of tools available in production, making the container leaner and less susceptible to misuse or exploitation.
 
-The last thing we want to address with this image is security. If we run a shell with the take five image and run a `whoami`, you can see that the default user is root:
+## Take Six - Running as a Non-Root User
+
+By default, containers run as the root user. If we run a shell inside our Take Five image and check the current user, we can see this behavior:
 
 ```plaintext
 docker run -it take_five:latest sh
@@ -554,9 +524,9 @@ root
 /app #
 ```
 
-This is [considered bad practice](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is compromised, the attacker would have root access to all the resources allocated to the container. As a safegaurd, it is considered best practice to create a non-root user and execute the container as that user.
+Running as root inside a container is [discouraged](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is ever compromised, the attacker would immediately have elevated privileges within the container. A simple safeguard is to create a dedicated non-root user and run the application as that user instead.
 
-In our Dockerfile, we can update the `runner` stage to create a new user and execute our script as that user.
+We can update the `runner` stage of our Dockerfile to create a non-root user called `demo` and switch to it before executing our script:
 
 ```dockerfile
 # take_6/Dockerfile
@@ -610,7 +580,7 @@ USER demo
 CMD ["python", "main.py"]
 ```
 
-Now when we build the image and run a shell, we can see that the default user is `demo` instead of `root`:
+Now when we build the image and open a shell, we can confirm that the container runs under the `demo` user instead of `root`:
 
 ```plaintext
 docker run -it take_six:latest sh
@@ -621,12 +591,12 @@ demo
 
 ## Wrap Up
 
-In this article, we examined several ways to optimize Docker images for running Python applications. By reducing the overall image size and prioritizing shorter build times, we were able to construct a compact and secure Docker image that is well suited for Python code bases.
+In this article, we explored several strategies for optimizing Docker images when running Python applications. By reducing image size and prioritizing faster build times, we created a compact and more secure container well suited for Python codebases.
 
 In summary:
 
-- Prefer **lightweight images** like `python:alpine` for the image base. This keeps the image size down by excluding libraries, binaries, and packages that are not needed at run time.
-- Make use of **modern Python project tools** like `uv` to speed up dependency downloads.
-- Be sure to **exclude development tooling** like code formatters and linters from the final image. `uv` makes this easy with dependency groups.
-- Utilize **multi-stage builds** to cleanly separate the construction of the virtual environment from the execution of the Python script.
-- Use a **non-root user** to make it harder for bad actors to gain unauthorized root access to the container resources.
+- Prefer **lightweight base images** such as `python:alpine` to minimize size and exclude unnecessary libraries, binaries, and packages.
+- Use **modern Python tooling** like `uv` to speed up dependency resolution and installation.
+- **Exclude development dependencies** (e.g., formatters, linters) from the final image. Tools that support `pyproject.toml`, such as `uv` or `poetry`, make this easy by organizing dependencies into groups.
+- Apply **multi-stage builds** to separate environment setup from runtime execution, keeping the final image clean and minimal.
+- Run as a **non-root user** to reduce the risk of privilege escalation if the container is compromised.
