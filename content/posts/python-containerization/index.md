@@ -109,7 +109,13 @@ autoflake==2.3.1
 
 ## Take One - Containerization with Ubuntu
 
-With the basics of our project established, lets take a look at one way we can containerize this application. Consider the following `Dockerfile`:
+With the basics of our project established, lets consider how we might containerize this application. In our container, we will install a couple of tools:
+
+- The Python interpreter
+- `pip` for downloading the dependencies
+- `venv` for creating a virtual environment for those dependencies
+
+We will start with the following `Dockerfile`:
 
 ```dockerfile
 # take_1/Dockerfile
@@ -143,7 +149,7 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-In this Dockerfile, we start with Ubuntu 24.04 as the base image. Next, we install Python, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it. This is a standard flow for running a Python application.
+In this Dockerfile, Ubuntu 24.04 is used as the base image. Next, we install the Python interpreter, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it. This is a standard flow for running a Python application.
 
 To build our image, we can use the `docker build` command:
 
@@ -249,7 +255,7 @@ We can also check the size of the image using the `docker image inspect` command
 ]
 ```
 
-You can see by the `Size` field (measured in bytes) that the image is over **half a gigabyte**! *Surely* we can do better than that.
+You can see by the `Size` field (measured in bytes) that the image is over **half a gigabyte**!
 
 ```json
 "Size": 589982747
@@ -257,9 +263,9 @@ You can see by the `Size` field (measured in bytes) that the image is over **hal
 
 ## Take Two - Choosing the right base image
 
-Even if you're new to containerization, there's a good chance you've already noticed the biggest red flag from our first attempt: using Ubuntu as the base image. When `apt` installs Python into Ubuntu, it will also pull in a ton of other packages, resulting in the 500MB image.
+Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a long list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 500MB.
 
-A good first step to reduce the overall image size is to **chose a slim base image**. For this article, I will use the `python:3.13-alpine3.22` image. This is an Alpine-based image with Python preinstalled. This image is very small and should result in a big reduction in build time.
+A straightforward way to avoid pulling in all those extra packages is to start from a purpose-built base image. For this article, we’ll use `python:3.13-alpine3.22`, an Alpine-based image with Python already preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
 
 Lets rebase our `Dockerfile` on `python:3.13-alpine3.22`:
 
@@ -313,13 +319,13 @@ For small applications with minimal dependencies, this `Dockerfile` is already q
 
 ## Take Three - Speeding Up Dependency Downloads
 
-So far, we have used `pip` to fetch all the dependencies for our virtual environment. While `pip` does get the job done, it is slow and inefficient. One way we can speed up our build time is by speeding up the dependency downloads.
+So far, we’ve used `pip` to install all the dependencies in our virtual environment. While `pip` gets the job done, it can be slow and inefficient. One effective way to speed up build times is to accelerate dependency installation.
 
-Enter [`uv`](https://docs.astral.sh/uv/). `uv` is a modern Python project management utility developed by [Astral](https://astral.sh/) that replaces `pip`, `pip-tools`, `pipx`, `poetry`, `pyenv`, `twine`, `virtualenv`, and more. Astral claims that `uv` is "10-100x faster than `pip`." By swapping `pip` for `uv`, our Python dependencies will be downloaded much faster and our image build time should go down significantly. (Even if you aren't containerizing your Python application, `uv` is much more ergonomic from a developer experience perspective than traditional tools.)
+Enter [`uv`](https://docs.astral.sh/uv/). `uv` is a modern Python project management utility developed by [Astral](https://astral.sh/) that consolidates and replaces tools like `pip`, `pip-tools`, `pipx`, `poetry`, `pyenv`, `twine`, `virtualenv`, and more. Astral claims that `uv` is "10-100x faster than `pip`." By swapping `pip` for `uv`, dependencies install much faster, and build times shrink significantly. (Even if you aren't containerizing your Python application, `uv` is, in my opinion, much more ergonomic from a developer experience perspective than traditional tools.)
 
-To replace `pip` with `uv` in our Dockerfile, we can rebase our Dockerfile onto one of [Astrals Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images). For this article, we will use `ghcr.io/astral-sh/uv:python3.13-alpine` which is essentially the `python:3.13-alpine` image with `uv` installed on top.
+To use `uv` in our Dockerfile, we can start from one of [Astral's Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images). For this article, we'll use `ghcr.io/astral-sh/uv:python3.13-alpine` which is essentially the `python:3.13-alpine` image with `uv` preinstalled.
 
-Here's what our `Dockerfile` looks like after the update:
+Here's the updated `Dockerfile`:
 
 ```dockerfile
 # take_3/Dockerfile
@@ -382,7 +388,7 @@ Our build time is cut (almost) in half:
 [+] Building 25.0s (11/11) FINISHED
 ```
 
-The size of the image actually increase a fair bit, 105MB up from 76MB in the previous iteration, but we will revisit this in take five.
+The size of the image actually increase a fair bit, 105MB up from 76MB in the previous iteration, but we will revisit this in Take Five.
 
 ```json
 "Size": 104666309
@@ -390,7 +396,7 @@ The size of the image actually increase a fair bit, 105MB up from 76MB in the pr
 
 ## Take Four - Removing Developer Dependencies
 
-Our `pyproject.toml` file contains a list of all the dependencies in our project, even dependencies that are only used for development such as `black`, `isort`, and `autoflake`. With our current `pyproject.toml` file, these modules will be included in the final image. These modules will unneccesssarily increase the size of the final image.
+Our `pyproject.toml` file lists all project dependencies, including development-only tools like `black`, `isort`, and `autoflake`. If we include these in the build, they’ll end up in the final image and unnecessarily increase its size.
 
 We can rework our `pyproject.toml` file to take advantage of [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to setup dependency groups in this article, but here is what the updated `pyproject.toml` file would look like:
 
@@ -417,7 +423,7 @@ dev = [
 ]
 ```
 
-Notice how the development dependencies have been moved to a dependency group called `dev`. To exclude the `dev` dependency group modules from the final image, we can add the `--no-group dev` flag to our `uv sync` command. This will instruct `uv` not to download the dependencies from the `dev` group.
+Notice how the development dependencies have been moved to a dependency group called `dev`. To exclude the `dev` dependency group modules from the final image, we can add `--no-group dev` to our `uv sync` command. This will instruct `uv` not to download the dependencies from the `dev` group.
 
 ```diff
 # take_4/Dockerfile
@@ -443,6 +449,8 @@ The image size is reduced by a few MB:
 ```json
 "Size": 102344686
 ```
+
+The amount of time and image size saved with this technique will of course vary from project to project, depending on the number of development dependencies used. In this example, the improvements were fairly minimal. However, by removing these modules from the image, we're continuing to shrink our attack surface, making our image more secure.
 
 ## Take Five - Removing Build Tools
 
@@ -511,11 +519,12 @@ The overall image size, however, has been cut down to under 50MB:
 "Size": 49673398
 ```
 
-Just like switching to a smaller base image helped reduce our attack surface, stripping out `uv` from the final image gives us another security win. Every binary inside a container is a potential entry point for attackers, and in this case `uv` isn’t needed at runtime. By keeping it only in the `builder` stage, we minimize the number of tools available in production, making the container leaner and less susceptible to misuse or exploitation.
+
+Stripping `uv` from the final image provides yet another reduction in attack surface. In my opinion, this step is even more important than removing development dependencies. If we just use a little common sense, it seems like a good idea to remove a binary *designed to download artifacts from the internet* into the container. By keeping `uv` only in the builder stage, we reduce the number of tools available in production, making the container leaner and less susceptible to misuse or exploitation.
 
 ## Take Six - Running as a Non-Root User
 
-By default, containers run as the root user. If we run a shell inside our Take Five image and check the current user, we can see this behavior:
+By default, containers run as the `root` user. If we run a shell inside our Take Five image and check the current user, we can see this behavior:
 
 ```plaintext
 docker run -it take_five:latest sh
@@ -595,7 +604,7 @@ In this article, we explored several strategies for optimizing Docker images whe
 
 In summary:
 
-- Prefer **lightweight base images** such as `python:alpine` to minimize size and exclude unnecessary libraries, binaries, and packages.
+- Prefer **lightweight, purpose-built base images** such as `python:alpine` to minimize size and exclude unnecessary libraries, binaries, and packages.
 - Use **modern Python tooling** like `uv` to speed up dependency resolution and installation.
 - **Exclude development dependencies** (e.g., formatters, linters) from the final image. Tools that support `pyproject.toml`, such as `uv` or `poetry`, make this easy by organizing dependencies into groups.
 - Apply **multi-stage builds** to separate environment setup from runtime execution, keeping the final image clean and minimal.
