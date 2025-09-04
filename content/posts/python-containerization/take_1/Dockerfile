@@ -1,7 +1,7 @@
 # Start from Ubuntu
 FROM ubuntu:24.04
 
-# Install Python and pip
+# Install Python, pip, and venv
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -16,8 +16,10 @@ RUN python3 -m venv /opt/venv
 # Ensure venv is used for all Python/Pip calls
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements and install
+# Copy requirements.txt
 COPY take_1/requirements.txt .
+
+# Install Python modules
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code

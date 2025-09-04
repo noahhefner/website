@@ -1,3 +1,5 @@
+# Shortcuts for building the images for this article
+
 .PHONY: all clean one
 
 all:

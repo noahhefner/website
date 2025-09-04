@@ -9,20 +9,21 @@ description = "Covers containerizing a basic Python app with Docker and uv, from
 showFullContent = false
 readingTime = false
 hideComments = false
-draft = true
 +++
 
 In my day job, I’ve been spending a lot of time working with Docker containers that run Python applications. Along the way, I found myself digging deep into how to optimize these Docker images. In this article, I’ll walk through the steps I took to build what I think is a solid approach to containerizing Python applications.
 
 What does it mean to optimize a Docker image? I see three main focus areas in containerization:
 
-1. **Build Time**: The amount of time it takes to build the container image. The longer it takes to build an image, the more of a headache it is to work with. If an image takes a long time to build, it becomes cumbersome to work with in a local development environment and can slow down CI-CD pipelines.
-2. **Image Size**: The total size of the image after it is built. Tangentially related to build time, large images can slow down CD if the server is constantly downloading large image files. Smaller images result in faster deployments.
+1. **Build Time**: How long it takes to build the container image. Longer build times make local development cumbersome and can slow down CI/CD pipelines.
+2. **Image Size**: The total size of the built image. Large images can slow down deployments if servers frequently download them, while smaller images result in faster, more efficient deployments.
 3. **Security Best Practices**: Containerization is not a crutch for poor security practices. Container security presents unique challenges and requires its own set of best practices.
 
 This article will focus more heavily on the first two points, but I will include some security notes as well. We will start with an “unoptimized” image, then progressively enhance it by reducing the build time, reducing the image size, and improving the security of the image.
 
 All code for this article is available in my GitHub website repository [here](https://github.com/noahhefner/website/tree/main/content/posts/python-containerization). If you're following along, all the commands in this article are run from the directory `content/posts/python-containerization` in that repository.
+
+*Sidenote: For benchmarking / testing purposes, the Docker build cache was cleared in between builds for each of these images.*
 
 ## Example Project
 
@@ -109,7 +110,7 @@ autoflake==2.3.1
 
 ## Take One - Containerization with Ubuntu
 
-With the basics of our project established, lets consider how we might containerize this application. In our container, we will install a couple of tools:
+With the basics of our project established, let's consider how we might containerize this application. In our container, we will install a couple of tools:
 
 - The Python interpreter
 - `pip` for downloading the dependencies
@@ -123,7 +124,7 @@ We will start with the following `Dockerfile`:
 # Start from Ubuntu
 FROM ubuntu:24.04
 
-# Install Python and pip
+# Install Python, pip, and venv
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -138,8 +139,10 @@ RUN python3 -m venv /opt/venv
 # Ensure venv is used for all Python/Pip calls
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements and install
+# Copy requirements.txt
 COPY take_1/requirements.txt .
+
+# Install Python modules
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -149,7 +152,7 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-In this Dockerfile, Ubuntu 24.04 is used as the base image. Next, we install the Python interpreter, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it. This is a standard flow for running a Python application.
+In this Dockerfile, Ubuntu 24.04 is used as the base image. Next, we install the Python interpreter, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, and then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it.
 
 To build our image, we can use the `docker build` command:
 
@@ -263,16 +266,16 @@ You can see by the `Size` field (measured in bytes) that the image is over **hal
 
 ## Take Two - Choosing the right base image
 
-Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a long list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 500MB.
+Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a lengthy list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 500MB.
 
-A straightforward way to avoid pulling in all those extra packages is to start from a purpose-built base image. For this article, we’ll use `python:3.13-alpine3.22`, an Alpine-based image with Python already preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
+An easy way to avoid pulling in all those extra packages is to start from a slim, purpose-built base image. For this article, we’ll use `python:3.13-alpine3.22`, an Alpine-based image with the Python interpreter and other tooling preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
 
-Lets rebase our `Dockerfile` on `python:3.13-alpine3.22`:
+Let's rebase our `Dockerfile` on `python:3.13-alpine3.22`:
 
 ```dockerfile
 # take_2/Dockerfile
 
-# Start from alpine image
+# Start from Python Alpine image
 FROM python:3.13-alpine3.22
 
 # Set work directory
@@ -284,8 +287,10 @@ RUN python -m venv /opt/venv
 # Ensure venv is used for all Python/Pip calls
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements and install
-COPY take_2/requirements.txt .
+# Copy requirements.txt
+COPY take_1/requirements.txt .
+
+# Install Python modules
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -313,9 +318,9 @@ Additionally, we end up with a much smaller resulting image, just 76MB. (Also om
 "Size": 76136781
 ```
 
-From a security perspective, we're also reducing our attack surface. By stripping away unnecessary packages, we leave fewer potential vulnerabilities inside the container. This is one of the big advantages of using purpose-built base images like `python:alpine` or `python:slim`—they’re designed to be lightweight, fast to build, and easier to secure.
+From a security perspective, we're also reducing our attack surface. By stripping away unnecessary packages, we leave fewer potential vulnerabilities inside the container. This is one key advantage of using purpose-built base images such as `python:alpine` or `python:slim`—they are designed to be lightweight, fast to build, and easier to secure.
 
-For small applications with minimal dependencies, this `Dockerfile` is already quite solid. For larger projects with many dependencies, however, there’s still room for improvement. In the next step, we’ll swap out pip for a faster dependency resolution tool to gain some additional speed.
+For small applications with minimal dependencies, this `Dockerfile` is already quite solid. For larger projects with many dependencies, however, there’s still room for improvement. In the next step, we’ll swap out `pip` for a faster dependency resolution tool to gain some additional speed.
 
 ## Take Three - Speeding Up Dependency Downloads
 
@@ -323,7 +328,7 @@ So far, we’ve used `pip` to install all the dependencies in our virtual enviro
 
 Enter [`uv`](https://docs.astral.sh/uv/). `uv` is a modern Python project management utility developed by [Astral](https://astral.sh/) that consolidates and replaces tools like `pip`, `pip-tools`, `pipx`, `poetry`, `pyenv`, `twine`, `virtualenv`, and more. Astral claims that `uv` is "10-100x faster than `pip`." By swapping `pip` for `uv`, dependencies install much faster, and build times shrink significantly. (Even if you aren't containerizing your Python application, `uv` is, in my opinion, much more ergonomic from a developer experience perspective than traditional tools.)
 
-To use `uv` in our Dockerfile, we can start from one of [Astral's Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images). For this article, we'll use `ghcr.io/astral-sh/uv:python3.13-alpine` which is essentially the `python:3.13-alpine` image with `uv` preinstalled.
+To use `uv` in our Dockerfile, we can start from one of [Astral's Docker images](https://docs.astral.sh/uv/guides/integration/docker/#available-images). For this article, we'll use `ghcr.io/astral-sh/uv:python3.13-alpine`, which is essentially the `python:3.13-alpine` image with `uv` preinstalled.
 
 Here's the updated `Dockerfile`:
 
@@ -339,10 +344,7 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Ensure venv is used for all Python/Pip calls
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Copy requirements and install
+# Copy pyproject.toml
 COPY take_3/pyproject.toml .
 
 # Install Python modules
@@ -351,14 +353,17 @@ RUN uv sync --no-cache
 # Copy application code
 COPY src/main.py main.py
 
+# Ensure venv is used for all Python calls
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Run the program
 CMD ["python", "main.py"]
 ```
 
-Notice that I have swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more more flexible than a `requirements.txt` file. Along with some other metadata about the project, it also contains a list of dependencies, just like `requirements.txt`.
+Notice that I have swapped the `requirements.txt` file for a `pyproject.toml` file. (This is the default for `uv` projects.) `pyproject.toml` is more flexible than a `requirements.txt` file. Along with other metadata about the project, it also contains a list of dependencies, similar to a `requirements.txt` file.
 
 ```toml
-# take_4/pyproject.toml
+# take_3/pyproject.toml
 
 [project]
 name = "python-container-article"
@@ -388,7 +393,7 @@ Our build time is cut (almost) in half:
 [+] Building 25.0s (11/11) FINISHED
 ```
 
-The size of the image actually increase a fair bit, 105MB up from 76MB in the previous iteration, but we will revisit this in Take Five.
+The size of the image actually increases a fair bit, 105MB up from 76MB in the previous iteration, but we will revisit this in Take Five.
 
 ```json
 "Size": 104666309
@@ -398,7 +403,7 @@ The size of the image actually increase a fair bit, 105MB up from 76MB in the pr
 
 Our `pyproject.toml` file lists all project dependencies, including development-only tools like `black`, `isort`, and `autoflake`. If we include these in the build, they’ll end up in the final image and unnecessarily increase its size.
 
-We can rework our `pyproject.toml` file to take advantage of [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to setup dependency groups in this article, but here is what the updated `pyproject.toml` file would look like:
+We can rework our `pyproject.toml` file to take advantage of [dependency groups](https://docs.astral.sh/uv/concepts/projects/sync/#syncing-development-dependencies) so that we can exclude those modules when we build the image for production. I won't cover how to set up dependency groups in this article, but here is what the updated `pyproject.toml` looks like:
 
 ```toml
 # take_4/pyproject.toml
@@ -423,7 +428,7 @@ dev = [
 ]
 ```
 
-Notice how the development dependencies have been moved to a dependency group called `dev`. To exclude the `dev` dependency group modules from the final image, we can add `--no-group dev` to our `uv sync` command. This will instruct `uv` not to download the dependencies from the `dev` group.
+Notice how the development dependencies have been moved to a dependency group called `dev`. To exclude the `dev` dependency group modules from the final image, we can add `--no-group dev` to our `uv sync` command in the `Dockerfile`. This will instruct `uv` not to fetch the dependencies from the `dev` group.
 
 ```diff
 # take_4/Dockerfile
@@ -450,13 +455,13 @@ The image size is reduced by a few MB:
 "Size": 102344686
 ```
 
-The amount of time and image size saved with this technique will of course vary from project to project, depending on the number of development dependencies used. In this example, the improvements were fairly minimal. However, by removing these modules from the image, we're continuing to shrink our attack surface, making our image more secure.
+The amount of time and image size saved with this technique will vary from project to project, depending on the number of development dependencies used. In this example, the improvements were fairly minimal. However, by removing these modules from the image, we're continuing to shrink our attack surface, making our image more secure.
 
 ## Take Five - Removing Build Tools
 
 In Take Three, we sped up the dependency resolution process by swapping `pip` for `uv`. While this did reduce the build time, it also **increased** the total image size. This is because the `uv` binary itself is ~40MB in size at the time of writing. Ironically, we can reduce the total image size by *removing* `uv` from the image. We only need `uv` to configure the virtual environment, so we can safely remove it from the final image.
 
-We can accomplish this by splitting our Dockerfile into two stages. This strategy is commonly referred to as a [multi-stage build](https://docs.docker.com/build/building/multi-stage/):
+We can accomplish this by splitting our Dockerfile into two stages. This strategy is commonly referred to as a [multi-stage build](https://docs.docker.com/build/building/multi-stage/).
 
 ```dockerfile
 # take_5/Dockerfile
@@ -472,8 +477,10 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Install dependencies
+# Copy pyproject.toml
 COPY take_5/pyproject.toml .
+
+# Install Python modules
 RUN uv sync --no-cache --no-group dev
 
 # -----------------------
@@ -487,19 +494,19 @@ WORKDIR /app
 # Copy venv from builder stage
 COPY --from=builder /app/.venv /app/.venv
 
-# Ensure venv is used
-ENV PATH="/app/.venv/bin:$PATH"
-
 # Copy application code
 COPY src/main.py main.py
+
+# Ensure venv is used
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the program
 CMD ["python", "main.py"]
 ```
 
-The first stage of this Dockerfile is the "builder" stage. In this stage, we create the virtual environment, and download our dependencies.
+The first stage of this Dockerfile is the "builder" stage. In this stage, we create the virtual environment and download our dependencies.
 
-The second stage of the Dockerfile is the "runner" stage. Since we're stating this stage from a bare `python:alpine` image, we don't inherit the `uv` binary from the first stage. In this stage, we simply copy over the virtual environment files that were created in the builder stage and execute the script.
+The second stage of the Dockerfile is the "runner" stage. Since we're starting this stage from `python:alpine`, we are excluding the `uv` binary from the first stage. The second stage simply copies over the virtual environment files that were created in the builder stage and execute the script.
 
 We can build the image with the following command:
 
@@ -519,12 +526,11 @@ The overall image size, however, has been cut down to under 50MB:
 "Size": 49673398
 ```
 
-
-Stripping `uv` from the final image provides yet another reduction in attack surface. In my opinion, this step is even more important than removing development dependencies. If we just use a little common sense, it seems like a good idea to remove a binary *designed to download artifacts from the internet* into the container. By keeping `uv` only in the builder stage, we reduce the number of tools available in production, making the container leaner and less susceptible to misuse or exploitation.
+Stripping `uv` from the final image provides yet another reduction in the container's attack surface. In my opinion, this step is even more important than removing development dependencies. If we use a little common sense, it seems like a good idea to remove a binary *designed to download artifacts from the internet* from the container. By keeping `uv` only in the builder stage, we reduce the number of tools available in production, making the container leaner and less susceptible to misuse or exploitation.
 
 ## Take Six - Running as a Non-Root User
 
-By default, containers run as the `root` user. If we run a shell inside our Take Five image and check the current user, we can see this behavior:
+By default, containers run as the `root` user. If we run a shell inside our Take Five image and check the current user, we can verify this behavior:
 
 ```plaintext
 docker run -it take_five:latest sh
@@ -535,7 +541,7 @@ root
 
 Running as root inside a container is [discouraged](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is ever compromised, the attacker would immediately have elevated privileges within the container. A simple safeguard is to create a dedicated non-root user and run the application as that user instead.
 
-We can update the `runner` stage of our Dockerfile to create a non-root user called `demo` and switch to it before executing our script:
+We can update the `runner` stage of our Dockerfile to create a non-root user called `demo`. We will also add commands to give that user ownership and execution rights on the `main.py` file. Finally, the `USER` command will switch to the `demo` user before executing the script.
 
 ```dockerfile
 # take_6/Dockerfile
@@ -554,8 +560,10 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Copy requirements and install dependencies
-COPY take_5/pyproject.toml .
+# Copy pyproject.toml
+COPY take_6/pyproject.toml .
+
+# Install Python modules
 RUN uv sync --no-cache --no-group dev
 
 # -----------------------
@@ -569,9 +577,6 @@ WORKDIR /app
 # Copy venv from builder stage
 COPY --from=builder /app/.venv /app/.venv
 
-# Ensure venv is used
-ENV PATH="/app/.venv/bin:$PATH"
-
 # Copy application code
 COPY src/main.py main.py
 
@@ -582,6 +587,9 @@ RUN addgroup -S demo && adduser -S demo -G demo
 RUN chown demo:demo /app/main.py && \
     chmod u+rwx /app/main.py
 
+# Ensure venv is used
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Switch to non-root user
 USER demo
 
@@ -589,7 +597,7 @@ USER demo
 CMD ["python", "main.py"]
 ```
 
-Now when we build the image and open a shell, we can confirm that the container runs under the `demo` user instead of `root`:
+Now, when we build the image and open a shell, we can confirm that the container runs under the `demo` user instead of `root`:
 
 ```plaintext
 docker run -it take_six:latest sh
@@ -600,7 +608,7 @@ demo
 
 ## Wrap Up
 
-In this article, we explored several strategies for optimizing Docker images when running Python applications. By reducing image size and prioritizing faster build times, we created a compact and more secure container well suited for Python codebases.
+In this article, we explored several strategies for optimizing Docker images when running Python applications. By reducing image size and prioritizing faster build times, we created a compact and more secure container well-suited for Python codebases.
 
 In summary:
 

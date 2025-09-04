@@ -7,17 +7,17 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Ensure venv is used for all Python/Pip calls
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Copy requirements and install
-COPY take_4/pyproject.toml .
+# Copy pyproject.toml
+COPY take_3/pyproject.toml .
 
 # Install Python modules
 RUN uv sync --no-cache --no-group dev
 
 # Copy application code
 COPY src/main.py main.py
+
+# Ensure venv is used for all Python calls
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the program
 CMD ["python", "main.py"]

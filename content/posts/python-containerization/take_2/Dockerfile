@@ -10,8 +10,10 @@ RUN python -m venv /opt/venv
 # Ensure venv is used for all Python/Pip calls
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements and install
-COPY take_2/requirements.txt .
+# Copy requirements.txt
+COPY take_1/requirements.txt .
+
+# Install Python modules
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
