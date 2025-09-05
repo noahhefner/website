@@ -83,7 +83,7 @@ pagination.pagerSize = 5
 
       [languages.en.params.logo]
         logoText = "Noah Hefner's Blog"
-        logoHomeLink = "/"
+        logoHomeLink = "/website"
 
 # For GitHub Pages
 [caches]
