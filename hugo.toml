@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "/website"
 languageCode = "en-us"
 theme = "terminal"
 pagination.pagerSize = 5
