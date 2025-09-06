@@ -1,10 +1,7 @@
 # -----------------------
 # Stage 1: Build
 # -----------------------
-FROM python:3.13-alpine3.22 AS builder
-
-# Copy the uv binary from the distroless uv image
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+FROM ghcr.io/astral-sh/uv:python3.13-alpine AS builder
 
 # Set work directory
 WORKDIR /app
