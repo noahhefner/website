@@ -4,7 +4,11 @@ date: 2025-11-09T18:50:40Z
 draft: true
 ---
 
-For the uninitiated, the "year of the linux desktop" is a running joke in the linux community referring to the idea that \<current year\> will be the year that Linux goes mainstream for regular desktop usage. That is to say - Linux will see widespread adoption for personal computing use amoungst behemouths such as Microsoft Windows Mac OS. While the prophecy is yet to be fulfilled, I remain hopeful that LInux will one day be a viable operating system for everyday folks.
+For the uninitiated, “the year of the Linux desktop” is somewhat of a running joke in the Linux community. It refers to the idea that one day, Linux will finally establish itself as a mainstream desktop operating system, standing alongside giants like Microsoft Windows and macOS for everyday computer users. For a variety of reasons, this prophecy has yet to be fulfilled—lack of support for some popular software applications (looking at you, Adobe), a fragmented ecosystem of desktop environments, and limited OEM support, to name a few. All of this has kept Linux just out of reach for the average computer user.
+
+But in 2025, it feels like the tide is turning. Valve showed the world—through the success of the Steam Deck—that Linux doesn’t have to be scary as they successfully placing a full-fledged Linux desktop in the hands of mullions of gamers. More recently, DHH has helped generate enthusiasm for Linux through the release of Omarchy, a beautiful, easy-to-install Arch Linux configuration (more on that later). At the same time, Microsoft and Apple seem dead-set on stuffing their operating systems with as much spyware and AI garbage as they possibly can. More and more average users feel like Microsoft and Apple are pushing them away with increasingly restrictive, bloated, and intrusive design choices, making Linux more attractive than ever. 
+
+I’ve been running Linux exclusively—in one form or another—on all my computers for about six years now. But this recent hype train has reignited my enthusiasm and inspired me to “build” my own Linux desktop environment from scratch. In this article, I give an overview of that process and all the ups and downs that came with it.
 
 ## First Contact with Linux
 
