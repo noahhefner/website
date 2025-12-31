@@ -57,6 +57,8 @@ Time for some upgrades!
 
 ![upgrades meme](upgrades.jpg)
 
+*Upgrades, people. Upgrades.*
+
 ## RAM, Storage, and Linux
 
 First up were the low-hanging fruit: RAM and storage. My T430 came with a spinning hard drive and 8GB of RAM. I didn’t record the original boot time, but it routinely took over a minute to load Windows 10, which came preinstalled.
@@ -138,6 +140,22 @@ The only repair I made to my T430 was replacing the bottom trackpad buttons. The
 ## CMOS Replacement
 
 I don't know if the previous owner ever replaced the CMOS battery on my T430, so I decided to do some preventative maintenance and put in a new one since the machine is over a decade old.
+
+## Future Plans
+
+Even after all those mods, there's two final upgrades I'd like to make.
+
+**Battery** - I'm still using the original, decade-old battery that came with the machine. This battery barely holds a charge at all and I pretty much have to have the laptop plugged into the wall at all times. I'm getting about an abysmal one hour of use on a full charge. When I do get a new battery, I plan to [upgrade to the 9-cell variant](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm), which should extend the screen on time significantly compared to the standard 6-cell.
+
+![9-cell battery for T430](9-cell.jpg)
+
+*9-cell battery for the T430*
+
+**USB Type-C Charging Port** - I found a Tindie seller who makes [3D-printed USB Type-C charging port replacements](https://www.tindie.com/products/mikepdiy/charging-port-type-c-lenovo-pd-t420-t430/) for the T430. This mod would allow me to charge the T430 using the same USB Type-C charger that I already have for all my other devices.
+
+![USB Type-C Charge Port for the T430](usbc-charge-port.jpg)
+
+*USB Type-C Charge Port for the T430*
 
 ## Conclusion
 
