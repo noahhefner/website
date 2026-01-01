@@ -63,13 +63,29 @@ Time for some upgrades!
 
 First up were the low-hanging fruit: RAM and storage. My T430 came with a spinning hard drive and 8GB of RAM. I didn’t record the original boot time, but it routinely took over a minute to load Windows 10, which came preinstalled.
 
-I replaced the hard drive with a Samsung 850 Pro SSD and upgraded to a 16GB G.Skill memory kit. I also ditched Windows in favor of Arch Linux, along with a [custom rice I wrote about last month](https://noahhefner.github.io/website/posts/linux-desktop/). With the SSD and a lighter operating system, the machine now boots in about 10 seconds.
+![New RAM and Storage](ram-storage.jpg)
+
+I replaced the hard drive with a Samsung SSD and upgraded to a 16GB G.Skill memory kit. I also ditched Windows in favor of Arch Linux, along with a [custom rice I wrote about last month](https://noahhefner.github.io/website/posts/linux-desktop/). With the SSD and a lighter operating system, the machine now boots in about 10 seconds.
+
+## 7-Row Keboard Mod
+
+![Seven Row T420 Keyboard](7row.png)
+
+*7 Row T420 Keyboard*
+
+The ThinkPad xx30 series replaced the iconic beveled keyboard with a more modern island-style design. Reception to this change was mixed, with some reviewers praising the new keyboard while others lamented the loss of the classic 7-row layout. One popular mod among T430 owners is swapping the stock keyboard for a T420 keyboard to restore the older design. This modification requires altering the T420 keyboard in several places, as it is not an exact fit.
+
+I found the mod interesting, so I ordered a T420 keyboard and installed it by following [this guide](https://www.instructables.com/ThinkPad-T430T430sX230-Classic-Keyboard-Mod/). The process went smoothly, and I had the new keyboard working without any issues.
+
+After using it for about two weeks, I realized I actually prefer the island-style keyboard. Maybe I’m just too young to fully appreciate the classic design; I think the island-style keyboard is great. Thankfully, this mod is reversible and I got the stock keyboard reinstalled in about five minutes.
 
 ## Screen Upgrade
 
 A sore spot on many ThinkPad models is the display, and the T430 is no exception. The stock display is absolute dog water. It’s a TN panel with some of the worst viewing angles I’ve ever seen on a laptop.
 
 Fortunately, someone discovered that the panel from a Dell Alienware M14x can be swapped in with no additional hardware or software modifications. The Alienware panel has the same resolution as the stock display but offers vastly improved viewing angles and color reproduction.
+
+picture of screen here
 
 There are ways to install a 1080p panel, but doing so requires an aftermarket adapter, and some users have reported screen flickering issues after installing it. I opted for the Alienware panel instead—1600×900 is plenty for my needs, and I didn’t want to install a questionable mod just to gain a few extra pixels.
 
@@ -117,29 +133,29 @@ picture here of notes
 
 *Disassembly notes*
 
-## 7-Row Keboard Mod
-
-The ThinkPad xx30 series replaced the iconic beveled keyboard with a more modern island-style design. Reception to this change was mixed, with some reviewers praising the new keyboard while others lamented the loss of the classic 7-row layout. One popular mod among T430 owners is swapping the stock keyboard for a T420 keyboard to restore the older design. This modification requires altering the T420 keyboard in several places, as it is not an exact fit.
-
-I found the mod interesting, so I ordered a T420 keyboard and installed it by following [this guide](https://www.instructables.com/ThinkPad-T430T430sX230-Classic-Keyboard-Mod/). The process went smoothly, and I had the new keyboard working without any issues.
-
-After using it for about two weeks, I realized I actually prefer the island-style keyboard. Maybe I’m just too young to fully appreciate the classic design—but I’ve come to think the island-style keyboard is pretty great. Thankfully this mod is reversible and I got the stock keyboard reinstalled in about five minutes.
-
 ## CPU Upgrade
 
 As I mentioned in the introduction, the T430 has a socketed CPU. This is incredibly rare for laptops. Even the Framework laptop, the bastion of modern repairable laptops, has a soldered CPU. There are a handful of processors that can be used in the T430. I selected the i7–3632QM, a quad-core, 8 thread, 35 watt chip which should offer a nice performance boost over the dual-core i5-3320M chip that came with my machine.
+
+cpu picture here
 
 ## Wireless Card Upgrade
 
 With coreboot installed and the whitelist removed, I could now install a modern wireless card. I selected the MPE-AX3000H which supports Wi-Fi 6 and Bluetooth 5.2.
 
+wireless card picture here
+
 ## Touchpad Button Repair
 
 The only repair I made to my T430 was replacing the bottom trackpad buttons. The stock buttons functioned fine, but it appeared that the previous owner had spilled some sort of liquid into them and they sometimes would stick to the chasis when pressed. I ordered the replacement buttons off of Amazon for just $4 and swapped them in. No more sticky buttons!
 
+touchpad button picture here
+
 ## CMOS Replacement
 
 I don't know if the previous owner ever replaced the CMOS battery on my T430, so I decided to do some preventative maintenance and put in a new one since the machine is over a decade old.
+
+CMOS battery picture here
 
 ## Future Plans
 
