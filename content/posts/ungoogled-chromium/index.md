@@ -1,12 +1,11 @@
 ---
-title: "Ungoogled Chromium"
+title: "Switching to Ungoogled Chromium"
 date: 2026-01-11T06:41:29-05:00
-draft: true
 ---
 
-There aren’t many real choices when it comes to web browsers these days. Over the past decade or so, Google Chrome has effectively monopolized the market, with most estimates placing its global market share between [60 and 70 percent](https://radar.cloudflare.com/reports/browser-market-share-2025-q1) globally. In addition to obvious anti-consumer concerns, this is especially unsettling for privacy-conscious individuals, as it leaves much of the modern web shaped by a company whose business model is fundamentally at odds with user privacy.
+There aren’t many real choices when it comes to web browsers these days. Over the past decade or so, Google Chrome has effectively monopolized the market, with most estimates placing its global market share between [60 and 70 percent](https://radar.cloudflare.com/reports/browser-market-share-2025-q1). In addition to obvious anti-consumer concerns, this is especially unsettling for privacy-conscious individuals, as it leaves much of the modern web shaped by a company whose business model is fundamentally at odds with user privacy.
 
-Privacy-focused browsers do exist, though none of them are perfect. Tor Browser offers strong anonymity at the cost of usability, while projects like [Arkenfox](https://github.com/arkenfox/user.js/) aim to enhance Firefox's security through aggressive configuration. Brave is a Chromium-based option that attempts to balance privacy and convenience, but its built-in cryptocurrency features aren’t for everyone. For the past several years, I’ve enjoyed using [LibreWolf](https://librewolf.net/)—a hardened Firefox fork that provides solid privacy out of the box with minimal setup.
+Privacy-focused browsers do exist, though none of them are perfect. Tor Browser offers strong anonymity at the cost of usability, while projects like [Arkenfox](https://github.com/arkenfox/user.js/) aim to enhance Firefox's security through aggressive configuration. Brave is a popular choice, offering strong privacy protections and even a bespoke search engine, but its strange cryptocurrency features give me the heebie-jeebies. For several years, I’ve enjoyed using [LibreWolf](https://librewolf.net/)—a hardened Firefox fork that provides solid privacy out of the box with minimal setup.
 
 However, after recently running into stability issues with LibreWolf that I couldn’t pin down, I began searching for a new web browser. Suspecting that my problems might be related to the Firefox engine itself, I narrowed my search to Chromium-based browsers. That’s when I discovered [ungoogled-chromium](https://github.com/ungoogled-software/ungoogled-chromium).
 
@@ -43,7 +42,7 @@ Another key selling point for me personally is the complete lack of bloatware in
 
 ## Customization
 
-Configuring UC to be convenient enough for daily use without compromising on privacy and security requires a fair amount of manual setup. The following sections outline the configuration changes I made to build a functional and private web browsing environment.
+Configuring UC to be convenient enough for daily use requires a fair amount of manual setup. The following sections outline the changes I made to build a functional web browsing environment.
 
 ### Setting A Search Engine
 
@@ -51,11 +50,17 @@ Consistent with its goal of maximizing user control, UC intentionally ships with
 
 ![Setting a Search Engine](setting-search-engine.png)
 
+*DuckDuckGo search engine*
+
 ### Adding Extension Support
 
 Another feature you will find missing from UC is Chrome extensions. Technically you can still install exentions, but additional setup is needed. I don’t use Chrome extensions extensively, but I do like to install uBlock for ad blocking and Bitwarden for quick access to my passwords.
 
 Setting up support for Chrome extensions is pretty straightforward and well documented in the UC wiki. There is a project called [chromium-web-store](https://github.com/NeverDecaf/chromium-web-store), which makes the process very easy.
+
+![Extensions](ext.png)
+
+*Extensions in ungoogled-chromium*
 
 ### Configuring Automatic Data Deletion + Exceptions
 
@@ -69,15 +74,21 @@ Fortunately, LibreWolf allows you to whitelist websites where you need to persis
 
 ![Automatic Data Deletion](delete-data.png)
 
+*Automatic Site Data Deletion Settings*
+
 ## Installing Widevine
 
 Finally, I needed to make a controversial modification to UC: installing [Widevine](https://developers.google.com/widevine/drm/overview). For the uninitiated, Widevine is a proprietary digital rights management (DRM) system from Google that runs in the web browser as an opaque binary blob with the stated goal of “provid[ing] the best experience for viewing premium content over digital distribution.” Essentially, it’s a bit of software that streaming platforms use to prevent people from pirating their content.
 
-Almost every major streaming platform, including music streamers like Spotify and even YouTube livestreams, require Widevine to be installed to function properly. Now, I recognize that installing Widevine goes directly against the values outlined in the previous paragraphs. But the way I see it, Widevine is unfortunately a necessary evil and installing it is a compromise that I’ve decided to accept.
+Almost every major streaming platform, including music streamers like Spotify, require Widevine to be installed to function properly. Now, I recognize that installing Widevine goes directly against the values outlined in the previous paragraphs. But the way I see it, Widevine is unfortunately a necessary evil and installing it is a compromise that I’ve decided to accept.
 
-The reccommended method for installing Widevine for UC (on Linux) involves downloading the Google Chrome `.deb` package, extracting the Windevine binary, then moving it to the correct directory on your machine. The UC [wiki](https://ungoogled-software.github.io/ungoogled-chromium-wiki/faq#how-do-i-install-widevine-cdm) even provides a bash script to automate this process. The devs recommend that you install Widevine from the same major version of Google Chrome as your installed version of UC, so its important to remember to also update Widevine when updating UC.
+![Spotify DRM Error](spot-error.png)
 
-To automate the process of keeping Widevine in sync with my UC install, I took the logic from the UC devs' bash script and integrated it into another script I had that updates all the packages on my system. The script checks and stores the currently installed version of UC, updates all the packages on my system, then checks again after all available updates have been installed to see if UC was updated to a newer version. If so, the script will then download and install Windevine from the matching version of Google Chrome.
+*Spotify DRM Error Message*
+
+The reccommended method for installing Widevine for UC (on Linux) involves downloading the Google Chrome `.deb` package, extracting the Windevine binary, then moving it to the correct directory on your machine. The UC [wiki](https://ungoogled-software.github.io/ungoogled-chromium-wiki/faq#how-do-i-install-widevine-cdm) even provides a bash script to do this for you. The devs recommend that you install Widevine from the same major version of Google Chrome as your installed version of UC, so its important to remember to also update Widevine when updating UC.
+
+To ensure I don't forget to update Widevine when I update UC, I took the logic from the UC devs' bash script and integrated it into my own bash script that updates all the packages on my system. The script checks and stores the currently installed version of UC, updates all the packages on my system (Arch packages, AUR packages, and flatpaks), then checks the UC version again after all available updates have been installed. If UC was updated to a newer version, the script will then download and install Windevine from the matching version of Google Chrome.
 
 ```bash
 #!/usr/bin/env bash
@@ -292,6 +303,6 @@ exit "$FAILED"
 
 As long as I remember to always use this script to update my system, then I should always have the right version of Widevine for my installed version of UC.
 
-## Concluding Thoughts
+## Closing Thoughts
 
 I initially installed UC for its openness, transparency, and robust privacy controls. But as I’ve used it over the last few weeks, I’ve found that the quality I most admire about it is its simplicity. There’s a refreshing quietness in software that isn’t trying to hook you into a subscription model or harvest your personal information for profit. It is clear that UC has no agenda beyond providing a transparent, secure, and private web browsing experience for its users.
