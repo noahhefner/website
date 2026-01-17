@@ -12,7 +12,7 @@ Inside the cabin, you won’t find modern conveniences like push-button start, t
 
 *100 Series Toyota Land Cruiser*
 
-After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is what led me to the machine currently sitting in my lap: a Lenovo ThinkPad T430. Released in 2012 and aimed at business users, the T430 is not a modern machine by any measure. Typical of early-2010s business laptops, the T430 includes a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
+After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the Lenovo ThinkPad T430 sitting on my desk. Released in 2012 and aimed at business users, the T430 is not a modern machine by any measure. Typical of early-2010s business laptops, the T430 includes a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
 
 ![Lenovo Thinkpad T430 Laptop](T430.jpg)
 
@@ -34,15 +34,15 @@ Created by IBM in the mid-1990s, ThinkPad computers have long been a staple in t
 
 In those early years, Lenovo preserved ThinkPad’s function-over-form, durable, and repairable design philosophy, earning a well-deserved reputation for reliability.
 
-However, much like how the newest Land Cruiser has drifted from its roots as a simple, rugged truck, some ThinkPad purists argue that modern ThinkPads have strayed from their origins as function-first workhorse machines. [2] This criticism is partly justified—modern ThinkPads don’t feel quite as solid or “tanky” as their older counterparts. That said, I think much of the criticism towards the newer models is undeserved.
+However, much like how the newest Land Cruiser has drifted from its roots as a simple, rugged truck, some ThinkPad purists argue that that the modern models have strayed from their origins as function-first workhorse machines. [2] This criticism is partly justified—modern ThinkPads don’t feel quite as solid or “tanky” as their older counterparts. That said, I think much of the criticism towards the newer models is undeserved.
 
-Modern ThinkPads remain among the most repairable laptops on the market. Lenovo provides excellent documentation and repair guides for all of its machines, and even many 2025 models—such as the ThinkPad L16 Gen 2—still feature replaceable storage, RAM, and batteries.
+Modern ThinkPads remain among the most repairable laptops on the market. Lenovo provides excellent documentation and repair guides for all of its machines. Even many 2025 models, such as the ThinkPad L16 Gen 2, still feature replaceable storage, RAM, and batteries.
 
 ![Thinkpad on iFixit.com](ifixit.png)
 
 *iFixit Repairability Score*
 
-While I’m sure modern ThinkPads are great machines, I was drawn to the classic ThinkPad durability and aesthetic. That said, I still wanted something practical and new enough to run modern software comfortably, not a museum piece. Ultimately, I landed on the xx30 generation—specifically the T430—for the following reasons:
+While I’m sure modern ThinkPads are great machines, I was enamoured by the classic ThinkPad aesthetic and durability. That said, I still wanted something practical and new enough to run modern software comfortably, not a museum piece. Ultimately, I landed on the xx30 generation—specifically the T430—for the following reasons:
 
 1. **Skulls** – Skulls is a project that makes it easy to flash any xx30-series ThinkPad with coreboot, an open-source firmware that supports a wide range of devices. More on this later.
 2. **Community Support** – There is a wealth of online content dedicated to modding and upgrading the T430.
@@ -87,7 +87,7 @@ Fortunately, someone discovered that the panel from a Dell Alienware M14x can be
 
 picture of screen here
 
-There are ways to install a 1080p panel, but doing so requires an aftermarket adapter, and some users have reported screen flickering issues after installing it. I opted for the Alienware panel instead—1600×900 is plenty for my needs, and I didn’t want to install a questionable mod just to gain a few extra pixels.
+There are ways to install a 1080p panel, but doing so requires a shady adepter from eBay, which reportedly can cause screen flickering on some machines. Since I was happy with the stock 1600x900 resolution, I decided to play it safe and stick to the Alienware panel.
 
 ## Firmware Modifications
 
@@ -95,9 +95,9 @@ There are ways to install a 1080p panel, but doing so requires an aftermarket ad
 
 Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at the most privileged level of the system. Boot times are also improved, as coreboot is far leaner than the stock firmware.
 
-Perhaps the biggest advantage, however, is the removal of the hardware whitelist baked into the stock T430 BIOS. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
+Perhaps the biggest advantage, however, is the removal of the hardware whitelist baked into the stock T430 UEFI. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
 
-It’s worth noting that coreboot does not completely replace the BIOS or UEFI. Instead, coreboot initializes the hardware and then hands control to a payload stored in firmware. The payload contains your BIOS or UEFI implementation. The two most common options are [SeaBIOS](https://github.com/coreboot/seabios), an open-source implementation of the legacy PC BIOS API, and [edk2](https://github.com/tianocore/edk2), an open-source UEFI firmware development environment.
+It’s worth noting that coreboot alone is not a replacement for the stock UEFI. coreboot simply initializes the hardware and then hands control to a payload stored in firmware. The payload contains your UEFI (or BIOS) implementation. The two most common options are [SeaBIOS](https://github.com/coreboot/seabios), an open-source implementation of the legacy PC BIOS API, and [edk2](https://github.com/tianocore/edk2), an open-source UEFI firmware development environment.
 
 Another popular firmware modification is [me_cleaner](https://github.com/corna/me_cleaner). To understand its purpose, you first need to understand the [Intel Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine) (IME). IME is a proprietary microcontroller present on all post-2006 Intel platforms that operates independently of the main CPU and operating system.
 
@@ -107,7 +107,7 @@ On newer systems—including the T430—IME cannot be fully disabled due to its 
 
 For the ThinkPad xx30 series, there’s a project called [skulls](https://github.com/merge/skulls), which bundles all the tools needed to install coreboot with SeaBIOS and apply me_cleaner. It’s essentially a one-stop shop for all the popular firmware mods on xx30 ThinkPads.
 
-Flashing the firmware requires fully disassembling the machine to access two ROM chips on the underside of the motherboard. A CH341A programmer or a Raspberry Pi—what I used—can then be used to flash the firmware. Skulls simplifies the process by abstracting away all the complexity of backing up the stock BIOS, running me_cleaning, and flshing coreboot into just two Bash scripts.
+Flashing the firmware requires fully disassembling the machine to access two ROM chips on the underside of the motherboard. A CH341A programmer or a Raspberry Pi can then be used to flash the firmware. Skulls simplifies the process by abstracting away all the complexity of backing up the stock UEFI, running me_cleaner, and flshing coreboot with SeaBIOS into just two Bash scripts.
 
 ![T430 disassembled](teardown.jpg)
 
@@ -121,17 +121,13 @@ Flashing the firmware requires fully disassembling the machine to access two ROM
 
 *The Raspberry Pi I used to flash coreboot*
 
-Using Skulls’ build scripts, I compiled coreboot myself so I could set a custom bootsplash image. The bootsplash is simply an image displayed for a few seconds during boot. I found a set of excellent “exploded ThinkPad” wallpapers from [this Reddit post](https://www.reddit.com/r/thinkpad/comments/5ngc8x/exploded_thinkpad_wallpaper_requests), and they were a perfect fit. The OP even created one specifically for the T430!
-
-![Exploded T430 Bootspash](bootsplash.jpg)
-
-*Exploded T430 bootsplash image*
-
 I was a bit intimidated by the idea of tearing apart my entire system to access the ROM chips. To stay organized, I took photos and recorded every single screw I removed in my notebook, making sure none were missed during reassembly. I’m very glad I did, because I don’t think I would have been able to put it back together without those references.
 
 picture here of notes
 
 *Disassembly notes*
+
+Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which uses the older BIOS standard instead of the newer UEFI standard. Fortunately, Skulls also unlocks the machine so that you can install a new BIOS/UEFI through software instead of tearing the macine apart again. After reassembling the machine and making sure everything still worked, I then used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS.
 
 ## CPU Upgrade
 
@@ -139,11 +135,15 @@ As I mentioned in the introduction, the T430 has a socketed CPU. This is incredi
 
 cpu picture here
 
-## Wireless Card Upgrade
+## Wireless Card and Battery Upgrade
 
-With coreboot installed and the whitelist removed, I could now install a modern wireless card. I selected the MPE-AX3000H which supports Wi-Fi 6 and Bluetooth 5.2.
+With coreboot installed and the whitelists removed, I could now install a modern wireless card and an aftermarket battery. For the wireless card, I selected the [MPE-AX3000H](https://www.amazon.com/MPE-AX3000H-802-11ac-Wireless-Express-Network/dp/B091FJXQHH) which supports Wi-Fi 6 and Bluetooth 5.2. This is a massive upgrade over the stock WiFi card, the Intel Centrino Advanced-N 6205, which doesn't even support 802.11ac.
 
 wireless card picture here
+
+From my research online, aftermarket ThinkPad batteries can really hit or miss. Some users have reported total battery failures after just a few months, while others have no issues at all for years. I opted for [this Xtend brand 9 cell pack](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm) from LaptopBatteryExpress.com. Xtend (alledgedly) uses high quality battery cells from Samsung, but I'm not going to crack my unit open to verify that claim. Since this pack contains three additional cells compared to the standard 6 cell, it should also last much longer between charges.
+
+Aside from the SSD, these two upgrades have had the biggest impact on the day-to-day usability of the machine. I can finally use it for more than 30 minutes away from the wall and the download speeds are absolutely incredible. Time will tell if the battery holds up; I was just happy to see that there are still aftermarket options available at all!
 
 ## Touchpad Button Repair
 
@@ -160,8 +160,6 @@ CMOS battery picture here
 ## Future Plans
 
 Even after all those mods, there's two final upgrades I'd like to make.
-
-**Battery** - I'm still using the original, decade-old battery that came with the machine. This battery barely holds a charge at all and I pretty much have to have the laptop plugged into the wall at all times. I'm getting about an abysmal one hour of use on a full charge. When I do get a new battery, I plan to [upgrade to the 9-cell variant](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm), which should extend the screen on time significantly compared to the standard 6-cell.
 
 ![9-cell battery for T430](9-cell.jpg)
 
