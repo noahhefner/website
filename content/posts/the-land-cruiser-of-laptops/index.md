@@ -93,17 +93,17 @@ There are ways to install a 1080p panel, but doing so requires a shady adepter f
 
 ![coreboot logo](coreboot-logo.png)
 
-Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at the most privileged level of the system. Boot times are also improved, as coreboot is far leaner than the stock firmware.
+Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot (yes, that is the [correct spelling](https://doc.coreboot.org/index.html#spelling-of-coreboot)) replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at the most privileged level of the system. Boot times are also improved, as coreboot is far leaner than the stock firmware.
 
 Perhaps the biggest advantage, however, is the removal of the hardware whitelist baked into the stock T430 UEFI. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
 
-It’s worth noting that coreboot alone is not a replacement for the stock UEFI. coreboot simply initializes the hardware and then hands control to a payload stored in firmware. The payload contains your UEFI (or BIOS) implementation. The two most common options are [SeaBIOS](https://github.com/coreboot/seabios), an open-source implementation of the legacy PC BIOS API, and [edk2](https://github.com/tianocore/edk2), an open-source UEFI firmware development environment.
+It’s worth noting that coreboot alone is not a replacement for the stock UEFI. coreboot simply initializes the hardware and then hands control to a payload stored in the firmware. The payload is what actually contains your UEFI or BIOS implementation. The two most popular options are [SeaBIOS](https://github.com/coreboot/seabios) and [edk2](https://github.com/tianocore/edk2), which are open-source implementations of the legacy PC BIOS and the newer UEFI specification, respectively.
 
 Another popular firmware modification is [me_cleaner](https://github.com/corna/me_cleaner). To understand its purpose, you first need to understand the [Intel Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine) (IME). IME is a proprietary microcontroller present on all post-2006 Intel platforms that operates independently of the main CPU and operating system.
 
-IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity. While IME has legitimate enterprise use cases, it has raised significant security and privacy concerns within the open-source community. [3]
+IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity, transparent to the user. While IME has legitimate **enterprise** use cases, it has raised significant security and privacy concerns within the open-source community. [3]
 
-On newer systems—including the T430—IME cannot be fully disabled due to its tight integration with the boot process. However, it can be neutered. me_cleaner modifies the IME firmware so that it is active only during the boot process, effectively disabling it during normal operation.
+me_cleaner is a tool for neutering IME on Intel-based machines. IME cannot be removed completely due to its tight integration with the boot process, but it can be modified such that it is active only during the boot process, effectively disabling it during normal operation.
 
 For the ThinkPad xx30 series, there’s a project called [skulls](https://github.com/merge/skulls), which bundles all the tools needed to install coreboot with SeaBIOS and apply me_cleaner. It’s essentially a one-stop shop for all the popular firmware mods on xx30 ThinkPads.
 
@@ -119,7 +119,7 @@ Flashing the firmware requires fully disassembling the machine to access two ROM
 
 ![Raspberry Pi Flasher](pi-flash.jpg)
 
-*The Raspberry Pi I used to flash coreboot*
+*Raspberry Pi*
 
 I was a bit intimidated by the idea of tearing apart my entire system to access the ROM chips. To stay organized, I took photos and recorded every single screw I removed in my notebook, making sure none were missed during reassembly. I’m very glad I did, because I don’t think I would have been able to put it back together without those references.
 
@@ -127,21 +127,23 @@ picture here of notes
 
 *Disassembly notes*
 
-Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which uses the older BIOS standard instead of the newer UEFI standard. Fortunately, Skulls also unlocks the machine so that you can install a new BIOS/UEFI through software instead of tearing the macine apart again. After reassembling the machine and making sure everything still worked, I then used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS.
+Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which uses the older BIOS standard instead of the newer UEFI standard. Fortunately, Skulls also unlocks the machine so that you can install a new BIOS/UEFI through software instead of tearing the macine apart again. After reassembling the machine and making sure everything still worked, I then used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) (which Skulls actually uses under the hood as well) to compile a new coreboot image with edk2 instead of SeaBIOS.
 
 ## CPU Upgrade
 
-As I mentioned in the introduction, the T430 has a socketed CPU. This is incredibly rare for laptops. Even the Framework laptop, the bastion of modern repairable laptops, has a soldered CPU. There are a handful of processors that can be used in the T430. I selected the i7–3632QM, a quad-core, 8 thread, 35 watt chip which should offer a nice performance boost over the dual-core i5-3320M chip that came with my machine.
+As mentioned in the introduction, the T430 has a socketed CPU. This is incredibly rare for laptops. The T430 can accept any [G2](https://en.wikipedia.org/wiki/Socket_G2) socketed CPU. I selected the i7–3632QM, a quad-core, 8 thread Ivy Bridge processory. This is not the highest performance chip that is compatible with the T430, but it is the highest performing compatible chip with a 35 watt TDP. The T430 *can technichly* support higher wattage chips like the i7–3840QM (45 watt TDP) and i7–3940XM (55 watt TDP), but I would rather have the power savings than the extra performance.
 
 cpu picture here
 
 ## Wireless Card and Battery Upgrade
 
-With coreboot installed and the whitelists removed, I could now install a modern wireless card and an aftermarket battery. For the wireless card, I selected the [MPE-AX3000H](https://www.amazon.com/MPE-AX3000H-802-11ac-Wireless-Express-Network/dp/B091FJXQHH) which supports Wi-Fi 6 and Bluetooth 5.2. This is a massive upgrade over the stock WiFi card, the Intel Centrino Advanced-N 6205, which doesn't even support 802.11ac.
+With coreboot installed and the whitelists removed, I could now install a modern wireless card and an aftermarket battery. For the wireless card, I selected the [MPE-AX3000H](https://www.amazon.com/MPE-AX3000H-802-11ac-Wireless-Express-Network/dp/B091FJXQHH) which supports Wi-Fi 6 and Bluetooth 5.2. This is a massive upgrade over the stock Intel Centrino Advanced-N 6205, which doesn't even support 802.11ac.
 
-wireless card picture here
+![New Wireless Chip](wireless-chip.jpg)
 
-From my research online, aftermarket ThinkPad batteries can really hit or miss. Some users have reported total battery failures after just a few months, while others have no issues at all for years. I opted for [this Xtend brand 9 cell pack](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm) from LaptopBatteryExpress.com. Xtend (alledgedly) uses high quality battery cells from Samsung, but I'm not going to crack my unit open to verify that claim. Since this pack contains three additional cells compared to the standard 6 cell, it should also last much longer between charges.
+*New Wireless Chip*
+
+From my research online, aftermarket ThinkPad batteries can be really hit or miss. I opted for [this Xtend brand 9 cell pack](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm) from LaptopBatteryExpress.com. Xtend (alledgedly) uses high quality battery cells from Samsung, though I'm not going to crack my unit open to verify that claim. Since this pack contains three additional cells compared to the standard 6 cell, it will also last much longer between charges.
 
 Aside from the SSD, these two upgrades have had the biggest impact on the day-to-day usability of the machine. I can finally use it for more than 30 minutes away from the wall and the download speeds are absolutely incredible. Time will tell if the battery holds up; I was just happy to see that there are still aftermarket options available at all!
 
@@ -149,7 +151,13 @@ Aside from the SSD, these two upgrades have had the biggest impact on the day-to
 
 The only repair I made to my T430 was replacing the bottom trackpad buttons. The stock buttons functioned fine, but it appeared that the previous owner had spilled some sort of liquid into them and they sometimes would stick to the chasis when pressed. I ordered the replacement buttons off of Amazon for just $4 and swapped them in. No more sticky buttons!
 
-touchpad button picture here
+![Old Touchpad Buttons](old_touch_buttons.jpg)
+
+*Old Touchpad Buttons*
+
+![New Touchpad Buttons](new_touch_buttons.png)
+
+*New Touchpad Buttons*
 
 ## CMOS Replacement
 
