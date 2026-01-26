@@ -12,46 +12,36 @@ Produced from 1999 through 2007, the 100 Series Toyota Land Cruiser is arguably 
 
 Inside the cabin, you won’t find modern conveniences like push-button start, touchscreen navigation, lane-keep assist, or even a backup camera. But what it lacks in creature comforts, the 100 Series more than makes up for with a design philosophy that prioritizes function over flash.
 
-After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the Lenovo ThinkPad T430 sitting on my desk. Released in 2012 and aimed at business users, the T430 is not a modern machine by any measure. Typical of early-2010s business laptops, the T430 includes a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
+After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the laptop sitting on the desk in front of me: a Lenovo ThinkPad T430. Released in 2012 and aimed at business users, the T430 is not a modern or sleek machine by any measure. Inside, it packs a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
 
 ![Lenovo ThinkPad T430 Laptop](T430.jpg)
 
-*Lenovo Thinkpad T430*
+*Lenovo ThinkPad T430*
 
-What makes this machine special, however, isn’t the spec sheet—it’s how unapologetically overbuilt and straightforward it is. The T430 was designed for years of daily use in corporate environments, not for chasing the latest tech trends. Its thick magnesium-reinforced chassis and utilitarian plastics favor reliability over thinness or flair. 
+But the spec sheet alone doesn’t tell the full story of this machine. Like the Land Cruiser, the T430 was designed to take years of use and abuse in just about any environment you throw at it. Its thick magnesium-reinforced chassis and utilitarian plastics result in a total weight of nearly five pounds—monstrous by modern laptop standards. Both machines treat longevity as a first-class feature, a philosophy that’s increasingly rare these days.
 
-In many ways, the T430 is the Land Cruiser of laptops. It’s built like an absolute tank, weighing nearly five pounds—monstrous by today’s standards. Like the Land Cruiser, it has an almost cult-like following of die-hard fans. It won’t turn heads in a coffee shop unless you know what you’re looking at. Both machines were designed with longevity as a feature, not a byproduct—a philosophy that’s increasingly rare.
+In the rest of this article, I’ll dive into my experience repairing, modifying, and daily-driving this 14-year-old laptop, and dig into why these old ThinkPads still inspire such a loyal following.
 
-In the rest of this article, I’ll dive into my experience daily-driving, repairing, and modifying my T430, and explain why these old ThinkPads continue to inspire such a loyal following.
+## A Brief History of ThinkPad
 
-## Why the T430?
-
-Created by IBM in the mid-1990s, ThinkPad computers have long been a staple in the enterprise world. Early ThinkPads were excellent machines, but after failing to achieve mass-market adoption, IBM sold its computer division to Lenovo in 2005. Lenovo hit the ground running with the launch of the T60 (pictured below) in 2006—the first ThinkPad released under Lenovo’s leadership and the first widely successful model of the Lenovo era. [1]
+Created by IBM in the mid-1990s, ThinkPad computers have long been a staple in the enterprise world. Early ThinkPads were excellent machines, but after failing to achieve mass-market adoption, IBM sold its computer division to Lenovo in 2005. Lenovo hit the ground running with the launch of the ThinkPad T60 (pictured below) in 2006—the first ThinkPad released under Lenovo’s leadership and the first widely successful model of the Lenovo era. [1]
 
 ![ThinkPad T60](t60.jpg)
 
 *ThinkPad T60*
 
-In those early years, Lenovo preserved ThinkPad’s function-over-form, durable, and repairable design philosophy, earning a well-deserved reputation for reliability.
+From the mid-2000s through the mid-2010s, Lenovo preserved ThinkPad’s durable and repairable design philosophy. Capitalizing on the success of the T60, Lenovo released the X60 in 2007, which was essentially a compact version of the T60. In 2008, the T60 and X60 were replaced with the T400 and X200, respectively. These two models would go on to shape the ThinkPad brand for years to come.
 
-However, much like how the newest Land Cruiser has drifted from its roots as a simple, rugged truck, some ThinkPad purists argue that the modern models have strayed from their origins as function-first workhorse machines. [2] This criticism is partly justified—modern ThinkPads don’t feel quite as solid or “tanky” as their older counterparts. That said, I think much of the criticism towards the newer models is undeserved.
+Some purists argue that modern ThinkPad models have drifted from their roots as durable, function-first machines, similar to the 2024 Land Cruiser. [2] As a result, there’s a lot of online discussion about what was the “last great ThinkPad.” Some neckbeards draw the line all the way back at the T60, while others argue that the T480 (released in 2018) is still a solid choice. Regardless, I think it’s safe to say that most, if not all, ThinkPad models—even the modern ones—remain some of the most serviceable machines on the market.
 
-Modern ThinkPads remain among the most repairable laptops on the market. Lenovo provides excellent documentation and repair guides for all of its machines. Even many 2025 models, such as the ThinkPad L16 Gen 2, still feature replaceable storage, RAM, and batteries.
 
-![ThinkPad on iFixit.com](ifixit.png)
+## Why T430?
 
-*iFixit Repairability Score for Lenovo ThinkPad L16*
+I got the itch to get my hands on an old ThinkPad after the YouTube algorithm served me [a video from Luke Smith](https://www.youtube.com/watch?v=La3sb5y7e-k), in which he talked about his experience with multiple older ThinkPad models. After immersing myself in ThinkPad lore for several days, I knew I had to get one. 
 
-While I’m sure modern ThinkPads are great machines, I was enamoured by the classic ThinkPad aesthetic and durability. That said, I still wanted something practical and new enough to run modern software comfortably, not a museum piece. Ultimately, I landed on the xx30 generation—specifically the T430—for the following reasons:
+From my research, I think the main reason these machines have such a devout following is that they have something for every kind of nerd. Are you a Linux user? ThinkPads have an excellent track record for Linux support. Do you want open-source firmware? You’re in luck! Many models support coreboot and/or Libreboot. Want to upgrade your machine? There's a thriving online community of ThinkPad modders and a plentiful supply of parts available. On a budget? Many models can be had for less than $100 on the used market.
 
-1. **Skulls** – Skulls is a project that makes it easy to flash any xx30-series ThinkPad with coreboot, an open-source firmware that supports a wide range of devices. More on this later.
-2. **Community Support** – There is a wealth of online content dedicated to modding and upgrading the T430.
-3. **Repairability and Upgradability** – The T430 is very easy to disassemble. All major components—including the CPU—are socketed rather than soldered, making repairs and upgrades straightforward. Parts are readily available from iFixit or the used market.
-4. **New Enough** – The xx30 series supports Intel’s Ivy Bridge processors. While not cutting-edge, they still provide solid performance for light to medium workloads. The T430 also supports up to 16GB of DDR3 memory, which is plenty for Linux. (By comparison, the T410—just two generations older—is limited to 8GB.)
-5. **Price** – The T430 is relatively inexpensive, typically selling for $50 to $200 on the used market, depending on condition.
-6. **USB 3.0** – The xx30 series was the first to include USB 3.0. (The previous xx20 generation is limited to USB 2.0, a compromise I wasn’t willing to make.)
-
-After settling on the T430, I picked one up on eBay for $150. That’s a bit on the high end, but the machine was in excellent condition and included the original charger. 
+Ultimately, I landed on the T430 because it’s new enough to support modern(ish) hardware while also retaining the old-school ThinkPad styling and legendary build quality. I had planned for this laptop to replace my Surface Book 2 as my daily driver, so I needed something I could actually use day to day—not a museum piece. I picked mine up on eBay for $150. That’s a bit on the high end, but the machine was in excellent condition and included the original charger.
 
 Time for some upgrades!
 
@@ -61,13 +51,13 @@ Time for some upgrades!
 
 ## RAM, Storage, and Linux
 
-First up were the low-hanging fruits: RAM and storage. My T430 came with a spinning hard drive and 8GB of RAM. I didn’t record the original boot time, but it routinely took over a minute to load Windows 10, which came preinstalled.
+First up were the low-hanging fruit: RAM and storage. My T430 came with a spinning hard drive and 8GB of RAM. I didn’t record the original boot time, but it routinely took over a minute to load Windows 10, which came preinstalled.
 
 ![New RAM and Storage](ram-storage.jpg)
 
 I replaced the hard drive with a Samsung SSD and upgraded to a 16GB G.Skill memory kit. I also ditched Windows in favor of Arch Linux, along with a [custom rice I wrote about last month](https://noahhefner.github.io/website/posts/linux-desktop/). With the SSD and a *superior* operating system, the machine now boots in about 10 seconds.
 
-## 7-Row Keboard Mod
+## 7-Row Keyboard Mod
 
 ![Seven Row T420 Keyboard](7row.png)
 
@@ -81,7 +71,7 @@ After using it for about two weeks, I realized I actually prefer the island-styl
 
 ## Screen Upgrade
 
-A sore spot on many ThinkPad models is the display, and the T430 is no exception. The stock display is absolute dog water. It’s a TN panel with some of the worst viewing angles I’ve ever seen on a laptop.
+A sore spot on many ThinkPad models is the display, and the T430 is no exception. The stock display is absolute garbage. It’s a TN panel with some of the worst viewing angles I’ve ever seen on a laptop.
 
 Fortunately, someone discovered that the panel from a Dell Alienware M14x can be swapped in with no additional hardware or software modifications. The Alienware panel has the same resolution as the stock display but offers vastly improved viewing angles and color reproduction.
 
@@ -93,7 +83,7 @@ There are ways to install a 1080p panel, but doing so requires a shady adapter f
 
 ![coreboot logo](coreboot-logo.png)
 
-Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot (yes, that is the [correct spelling](https://doc.coreboot.org/index.html#spelling-of-coreboot)) replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at the most privileged level of the system. Boot times are also improved, as coreboot is leaner than the stock firmware.
+Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot (yes, that is the [correct spelling](https://doc.coreboot.org/index.html#spelling-of-coreboot)) replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at one of the most privileged levels of the system. Boot times are also improved, as coreboot is leaner than the stock firmware.
 
 Perhaps the biggest advantage, however, is the removal of the hardware whitelist baked into the stock T430 UEFI. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
 
@@ -131,7 +121,7 @@ I was a bit intimidated by the idea of tearing apart my entire system to access 
 
 *Disassembly notes*
 
-Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which implements the older BIOS standard instead of the newer UEFI standard. For my T430, I wanted to use edk2 instead of SeaBIOS, simply because it is a little more user friendly. Fortunately, Skulls also unlocks the machine so that you can later install a new BIOS/UEFI through software via the `flashrom` utility instead of tearing the machine apart all over again. After reassembling the laptop and making sure everything still worked, I used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS. I then used `flashrom` to flash this new edk2 image to my motherboard.
+Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which implements the older BIOS standard instead of the newer UEFI standard. For my T430, I wanted to use edk2 instead of SeaBIOS, simply because it is a little more user-friendly. Fortunately, Skulls also unlocks the machine so that you can later install a new BIOS/UEFI through software via the `flashrom` utility instead of tearing the machine apart all over again. After reassembling the laptop and making sure everything still worked, I used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS. I then used `flashrom` to flash this new edk2 image to my motherboard.
 
 ![edk2 UEFI](edk2.jpg)
 
@@ -139,9 +129,7 @@ Skulls is by far the easiest way to get coreboot installed on the T430. But it i
 
 ## CPU Upgrade
 
-As mentioned in the introduction, the T430 has a socketed CPU, which is incredibly rare for laptops. The T430 can accept any [G2](https://en.wikipedia.org/wiki/Socket_G2) socketed CPU. I selected the i7–3632QM, a quad-core, 8 thread Ivy Bridge series processory. This is not the highest performance chip that is compatible with the T430, but it is the highest performing compatible chip *with a 35 watt TDP*. The T430 *can technically* support higher wattage chips like the i7–3840QM (45 watt TDP) and i7–3940XM (55 watt TDP), but I would rather have the power savings than the extra performance.
-
-As mentioned in the introduction, the T430 has a socketed CPU, which is incredibly rare for laptops. The T430 can accept any [G2](https://en.wikipedia.org/wiki/Socket_G2) socketed CPU. I selected the i7–3632QM, a quad-core, 8-thread Ivy Bridge series processor. This is not the highest-performance chip that is compatible with the T430, but it is the highest-performing compatible chip with a 35-watt TDP. The T430 can technically support higher wattage chips like the i7–3840QM (45 watt TDP) and i7–3940XM (55 watt TDP), but I would rather have the power savings than the extra performance.
+The T430 has a socketed CPU, which is incredibly rare for laptops. The T430 can accept any [G2](https://en.wikipedia.org/wiki/Socket_G2) socketed CPU. I selected the i7–3632QM, a quad-core, 8-thread Ivy Bridge series processor. This is not the highest-performance chip that is compatible with the T430, but it is the highest-performing compatible chip with a 35-watt TDP. The T430 can technically support higher wattage chips like the i7–3840QM (45 watt TDP) or even the i7–3940XM (55 watt TDP), but I would rather have the power savings than the extra performance.
 
 ![CPU](cpu.png)
 
@@ -153,9 +141,9 @@ With coreboot installed and the whitelists removed, I could now install a modern
 
 ![New Wireless Chip](wireless-chip.jpg)
 
-*New Wireless Chip*
+*MPE-AX3000H Wireless Chip*
 
-From my research online, aftermarket ThinkPad batteries can be really hit or miss. I opted for [this Xtend brand 9-cell pack](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm) from [LaptopBatteryExpress.com](https://www.laptopbatteryexpress.com/). Xtend (alledgedly) uses high quality battery cells from Samsung, though I'm not going to crack my unit open to verify that claim. Since this pack contains three additional cells compared to the standard 6-cell pack, it protrudes from the back of the laptop a fair bit, but it will also last much longer between charges.
+From my research online, aftermarket ThinkPad batteries can be really hit or miss. I opted for [this Xtend brand 9-cell pack](https://www.laptopbatteryexpress.com/Lenovo-ThinkPad-70-9-Cell-Battery-p/len-707xt.htm) from [LaptopBatteryExpress.com](https://www.laptopbatteryexpress.com/). Xtend (allegedly) uses high quality battery cells from Samsung, though I'm not going to crack my unit open to verify that claim. Since this pack contains three additional cells compared to the standard 6-cell pack, it protrudes from the back of the laptop a fair bit, but it will also last much longer between charges.
 
 ![Big Battery](big_battery.jpg)
 
@@ -165,7 +153,7 @@ Aside from the SSD, these two upgrades have had the biggest impact on the day-to
 
 ## Touchpad Button Repair
 
-The only repair I made to my T430 was replacing the bottom trackpad buttons. The stock buttons functioned fine, but it appeared that the previous owner had spilled some sort of liquid into them, and they sometimes stuck to the chasis when pressed. I ordered the replacement buttons from Amazon for just $4 and swapped them in. No more sticky buttons!
+The only repair I made to my T430 was replacing the bottom trackpad buttons. The stock buttons functioned fine, but it appeared that the previous owner had spilled some sort of liquid into them, and they sometimes stuck to the chassis when pressed. I ordered the replacement buttons from Amazon for just $4 and swapped them in. No more sticky buttons!
 
 ![Old Touchpad Buttons](old_touch_buttons.jpg)
 
@@ -199,7 +187,7 @@ I absolutely love my T430. I appreciate all the tactile elements of the machine,
 
 There are so many other thoughtful touches throughout the machine. Small LEDs on the back of the display indicate when the laptop is sleeping or charging while the lid is closed. The USB ports on the left side are recessed, allowing a wireless mouse dongle to remain plugged in without awkwardly protruding from the chassis. The battery is hot-swappable, enabling extended usage sessions—if you’re willing to lug around a second one. This level of attention to detail and well-considered design makes the T430 a joy to use every day.
 
-The process of modifying, customizing, and upgrading the machine is both fun and rewarding. There’s a unique sense of accomplishment in reviving an old piece of hardware and breathing new life into a machine that most people would consider obsolete. I take pride in knowing my machine inside and out and having the confidence to repair it and maintain it for years to come.
+The process of modifying, customizing, and upgrading the machine has been both fun and rewarding. There’s a unique sense of accomplishment in reviving an old piece of hardware and breathing new life into a machine that most people would consider obsolete. I take pride in knowing my machine inside and out and having the confidence to repair it and maintain it for years to come.
 
 ## Sources
 
