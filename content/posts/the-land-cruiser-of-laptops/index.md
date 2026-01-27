@@ -8,40 +8,30 @@ draft: true
 
 *100 Series Toyota Land Cruiser*
 
-Produced from 1999 through 2007, the 100 Series Toyota Land Cruiser is arguably one of the toughest vehicles ever made. It’s not uncommon to see 100 Series Land Cruisers still on the road today with well over 200,000 miles on the odometer—and still going strong. This longevity comes from durable yet simple construction. The 100 Series features body-on-frame architecture, a solid rear axle, and the legendary 4.7-liter 2UZ-FE—often cited as one of the most reliable engines Toyota has ever produced.
+Produced from 1999 through 2007, the 100 Series Toyota Land Cruiser is arguably one of the toughest vehicles ever made. It’s not uncommon to see a 100 Series on the road today with well over 300,000 miles on the odometer and still going strong. Inside the cabin, you won’t find modern conveniences like push-button start, touchscreen navigation, lane-keep assist, or even a backup camera. Instead, Toyota prioritized a body-on-frame architecture, solid rear axle, and the legendary 4.7-liter 2UZ-FE—often cited as one of the [most reliable engines Toyota has ever produced](https://www.motortrend.com/features/million-mile-tundra-the-tear-down). This simple, no nonsense construction has resulted in one of the most durable trucks to ever roll off an assembly line.
 
-Inside the cabin, you won’t find modern conveniences like push-button start, touchscreen navigation, lane-keep assist, or even a backup camera. But what it lacks in creature comforts, the 100 Series more than makes up for with a design philosophy that prioritizes function over flash.
-
-After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the laptop sitting on the desk in front of me: a Lenovo ThinkPad T430. Released in 2012 and aimed at business users, the T430 is not a modern or sleek machine by any measure. Inside, it packs a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
+After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the laptop sitting on the desk in front of me: a Lenovo ThinkPad T430. Released in 2012 and targeted primarily at business users, the T430 is not a modern or sleek machine by any measure. It packs a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
 
 ![Lenovo ThinkPad T430 Laptop](T430.jpg)
 
 *Lenovo ThinkPad T430*
 
-But the spec sheet alone doesn’t tell the full story of this machine. Like the Land Cruiser, the T430 was designed to take years of use and abuse in just about any environment you throw at it. Its thick magnesium-reinforced chassis and utilitarian plastics result in a total weight of nearly five pounds—monstrous by modern laptop standards. Both machines treat longevity as a first-class feature, a philosophy that’s increasingly rare these days.
+But like the Land Cruiser, the spec sheet alone doesn’t tell the full story of this machine. The T430 was designed to take years of use and abuse in just about any environment you throw at it. Its thick magnesium-reinforced chassis and utilitarian plastics result in a total weight of nearly five pounds—monstrous by modern laptop standards. Both machines treat longevity as a first-class feature, a philosophy that’s increasingly rare these days.
 
-In the rest of this article, I’ll dive into my experience repairing, modifying, and daily-driving this 14-year-old laptop, and dig into why these old ThinkPads still inspire such a loyal following.
-
-## A Brief History of ThinkPad
-
-Created by IBM in the mid-1990s, ThinkPad computers have long been a staple in the enterprise world. Early ThinkPads were excellent machines, but after failing to achieve mass-market adoption, IBM sold its computer division to Lenovo in 2005. Lenovo hit the ground running with the launch of the ThinkPad T60 (pictured below) in 2006—the first ThinkPad released under Lenovo’s leadership and the first widely successful model of the Lenovo era. [1]
-
-![ThinkPad T60](t60.jpg)
-
-*ThinkPad T60*
-
-From the mid-2000s through the mid-2010s, Lenovo preserved ThinkPad’s durable and repairable design philosophy. Capitalizing on the success of the T60, Lenovo released the X60 in 2007, which was essentially a compact version of the T60. In 2008, the T60 and X60 were replaced with the T400 and X200, respectively. These two models would go on to shape the ThinkPad brand for years to come.
-
-Some purists argue that modern ThinkPad models have drifted from their roots as durable, function-first machines, similar to the 2024 Land Cruiser. [2] As a result, there’s a lot of online discussion about what was the “last great ThinkPad.” Some neckbeards draw the line all the way back at the T60, while others argue that the T480 (released in 2018) is still a solid choice. Regardless, I think it’s safe to say that most, if not all, ThinkPad models—even the modern ones—remain some of the most serviceable machines on the market.
-
+In the rest of this article, I’ll dive into my experience repairing, modifying, and daily-driving this 14-year-old laptop, and dig into why older ThinkPads still inspire such a loyal following today.
 
 ## Why T430?
 
-I got the itch to get my hands on an old ThinkPad after the YouTube algorithm served me [a video from Luke Smith](https://www.youtube.com/watch?v=La3sb5y7e-k), in which he talked about his experience with multiple older ThinkPad models. After immersing myself in ThinkPad lore for several days, I knew I had to get one. 
+I got the itch to get my hands on an old ThinkPad after the YouTube algorithm served me [a video from Luke Smith](https://www.youtube.com/watch?v=La3sb5y7e-k), in which he talked about his experience with multiple older ThinkPad models. After immersing myself in the ThinkPad lore for several days, I was hooked.
 
-From my research, I think the main reason these machines have such a devout following is that they have something for every kind of nerd. Are you a Linux user? ThinkPads have an excellent track record for Linux support. Do you want open-source firmware? You’re in luck! Many models support coreboot and/or Libreboot. Want to upgrade your machine? There's a thriving online community of ThinkPad modders and a plentiful supply of parts available. On a budget? Many models can be had for less than $100 on the used market.
+From my research, I think there's a few key reasons why nerds like me are interrested in old ThinkPads:
 
-Ultimately, I landed on the T430 because it’s new enough to support modern(ish) hardware while also retaining the old-school ThinkPad styling and legendary build quality. I had planned for this laptop to replace my Surface Book 2 as my daily driver, so I needed something I could actually use day to day—not a museum piece. I picked mine up on eBay for $150. That’s a bit on the high end, but the machine was in excellent condition and included the original charger.
+1. **Open Firmware Support**: Many older ThinkPad models can be modified with open source firmware.
+2. **Linux Compatibility**: ThinkPads are excellent Linux machines (I use Arch btw).
+3. **Repairability / Upgradability**: ThinkPads are very easy to dissassemble and work on. They use industry standard parts, which makes upgrading to newer components a breeze.
+4. **Modding**: There is a thriving ThinkPad modding community online and many well-documented methods for enhancing these laptops beyond their stock capabilities.
+
+Ultimately, I landed on the T430 because it’s new enough to support modern(ish) hardware while also retaining the old-school ThinkPad styling and legendary build quality. I had planned for this laptop to replace my Surface Book 2 as my daily driver, so I needed something I could actually use day to day—not a museum piece like a T60. I picked mine up on eBay for $150 which was a bit on the high end, but the machine was in excellent condition and included the original charger.
 
 Time for some upgrades!
 
@@ -91,7 +81,7 @@ It’s worth noting that coreboot alone is not a replacement for the stock UEFI.
 
 Another popular firmware modification is [me_cleaner](https://github.com/corna/me_cleaner). To understand its purpose, you first need to understand the [Intel Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine), or IME. IME is a proprietary microcontroller present on all post-2006 Intel platforms that operates independently of the main CPU and operating system.
 
-IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity, transparent to the user. While IME has legitimate **enterprise** use cases, it has raised significant security and privacy concerns within the open-source community. [3]
+IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity, transparent to the user. While IME has legitimate **enterprise** use cases, it has raised significant security and privacy concerns within the open-source community. [4]
 
 me_cleaner is a tool for neutering IME on Intel-based machines. IME cannot be removed completely due to its tight integration with the boot process, but it can be modified such that it is active **only** during the boot process, effectively disabling it during normal operation.
 
@@ -193,4 +183,5 @@ The process of modifying, customizing, and upgrading the machine has been both f
 
 1. [THINK: A brief history of ThinkPads, from IBM to Lenovo](https://www.notebookcheck.net/THINK-A-brief-history-of-ThinkPads-from-IBM-to-Lenovo.418728.0.html)
 2. [What was the last truly great Thinkpad?](https://www.reddit.com/r/thinkpad/comments/p47j37/what_was_the_last_truly_great_thinkpad/)
-3. [Intel Management Engine - Wikipedia](https://en.wikipedia.org/wiki/Intel_Management_Engine)
+3. [How Toyota Got the 2024 Land Cruiser So Wrong — Full Review & History — Jason Cammisa on the ICONS](https://www.youtube.com/watch?v=zlhSgUh_6VY)
+4. [Intel Management Engine - Wikipedia](https://en.wikipedia.org/wiki/Intel_Management_Engine)
