@@ -1,14 +1,13 @@
 ---
 title: "The Land Cruiser of Laptops"
-date: 2026-01-20T20:51:01+00:00
-draft: true
+date: 2026-01-27T20:51:01+00:00
 ---
 
 ![100 Series Toyota Land Cruiser](land-cruiser-100.jpg)
 
-*100 Series Toyota Land Cruiser*
+*Toyota Land Cruiser 100 Series*
 
-Produced from 1999 through 2007, the 100 Series Toyota Land Cruiser is arguably one of the toughest vehicles ever made. It’s not uncommon to see a 100 Series on the road today with well over 300,000 miles on the odometer and still going strong. Inside the cabin, you won’t find modern conveniences like push-button start, touchscreen navigation, lane-keep assist, or even a backup camera. Instead, Toyota prioritized a body-on-frame architecture, solid rear axle, and the legendary 4.7-liter 2UZ-FE—often cited as one of the [most reliable engines Toyota has ever produced](https://www.motortrend.com/features/million-mile-tundra-the-tear-down). This simple, no nonsense construction has resulted in one of the most durable trucks to ever roll off an assembly line.
+Produced from 1999 through 2007, the Toyota Land Cruiser 100 Series is arguably one of the toughest vehicles ever made. It’s not uncommon to see a 100 Series on the road today with well over 300,000 miles on the odometer and still going strong. Inside the cabin, you won’t find modern conveniences like push-button start, touchscreen navigation, lane-keep assist, or even a backup camera. Instead, Toyota prioritized a body-on-frame architecture, solid rear axle, and the legendary 4.7-liter 2UZ-FE—often cited as one of the [most reliable engines Toyota has ever produced](https://www.motortrend.com/features/million-mile-tundra-the-tear-down). This simple, no-nonsense construction has resulted in one of the most durable trucks to ever roll off an assembly line.
 
 After daily driving a 100 Series for over five years, I developed a deep appreciation for machines that value durability over novelty. That same philosophy is also embodied in the laptop sitting on the desk in front of me: a Lenovo ThinkPad T430. Released in 2012 and targeted primarily at business users, the T430 is not a modern or sleek machine by any measure. It packs a dual-core Ivy Bridge processor, 8GB of DDR3 memory, a spinning hard drive, a barely passable webcam, and what might be the worst laptop screen ever produced.
 
@@ -16,22 +15,24 @@ After daily driving a 100 Series for over five years, I developed a deep appreci
 
 *Lenovo ThinkPad T430*
 
-But like the Land Cruiser, the spec sheet alone doesn’t tell the full story of this machine. The T430 was designed to take years of use and abuse in just about any environment you throw at it. Its thick magnesium-reinforced chassis and utilitarian plastics result in a total weight of nearly five pounds—monstrous by modern laptop standards. Both machines treat longevity as a first-class feature, a philosophy that’s increasingly rare these days.
+But like the Land Cruiser, the spec sheet alone doesn’t tell the full story of this computer. The T430 was designed to take years of use and abuse in just about any environment you throw at it. Its thick magnesium-reinforced chassis and utilitarian plastics result in a total weight of nearly five pounds—monstrous by modern laptop standards. Both machines treat longevity as a first-class feature, a philosophy that’s increasingly rare these days.
 
 In the rest of this article, I’ll dive into my experience repairing, modifying, and daily-driving this 14-year-old laptop, and dig into why older ThinkPads still inspire such a loyal following today.
 
 ## Why T430?
 
-I got the itch to get my hands on an old ThinkPad after the YouTube algorithm served me [a video from Luke Smith](https://www.youtube.com/watch?v=La3sb5y7e-k), in which he talked about his experience with multiple older ThinkPad models. After immersing myself in the ThinkPad lore for several days, I was hooked.
+I got the ThinkPad itch after the YouTube algorithm served me a video from Luke Smith titled [Which ThinkPad Should You Get? (And Libreboot notes)](https://www.youtube.com/watch?v=La3sb5y7e-k). In the video, Luke covers a variety of topics, including Libreboot, the 7-row keyboard, and the Intel Management Engine. But I'm getting ahead of myself. After immersing myself deep in the ThinkPad lore for several days, I was hooked.
 
-From my research, I think there's a few key reasons why nerds like me are interrested in old ThinkPads:
+From my research (browsing Reddit), there seem to be a few key reasons why nerds like me are interested in old ThinkPads:
 
 1. **Open Firmware Support**: Many older ThinkPad models can be modified with open source firmware.
-2. **Linux Compatibility**: ThinkPads are excellent Linux machines (I use Arch btw).
-3. **Repairability / Upgradability**: ThinkPads are very easy to dissassemble and work on. They use industry standard parts, which makes upgrading to newer components a breeze.
-4. **Modding**: There is a thriving ThinkPad modding community online and many well-documented methods for enhancing these laptops beyond their stock capabilities.
+2. **Linux Compatibility**: ThinkPads are famously excellent machines for running Linux (I use Arch btw).
+3. **Repairability / Upgradability**: ThinkPads are very easy to dissassemble and work on. They use industry-standard parts, which makes replacing components a breeze.
+4. **Durability**: Old ThinkPads are bricks, in the best way possible. They aren't slim or light, but they can take a beating and keep on chugging.
+5. **Modding**: There is a thriving ThinkPad modding community online and many well-documented mods that can be performed to enhance these laptops beyond their stock capabilities.
+6. **They're Cheap**: Except for the ThinkPad "enthusiasts", nobody else really wants these things, making them very affordable on the used market.
 
-Ultimately, I landed on the T430 because it’s new enough to support modern(ish) hardware while also retaining the old-school ThinkPad styling and legendary build quality. I had planned for this laptop to replace my Surface Book 2 as my daily driver, so I needed something I could actually use day to day—not a museum piece like a T60. I picked mine up on eBay for $150 which was a bit on the high end, but the machine was in excellent condition and included the original charger.
+Ultimately, I landed on the T430 because it’s new enough to support modern(ish) hardware while also retaining the old-school ThinkPad styling and legendary build quality. I had planned for this laptop to replace my Surface Book 2 as my daily driver, so I needed something I could actually use day to day—not a museum piece like a T60. I picked mine up on eBay for $150, which was a bit on the high end, but it was in excellent condition and included the original charger.
 
 Time for some upgrades!
 
@@ -63,29 +64,33 @@ After using it for about two weeks, I realized I actually prefer the island-styl
 
 A sore spot on many ThinkPad models is the display, and the T430 is no exception. The stock display is absolute garbage. It’s a TN panel with some of the worst viewing angles I’ve ever seen on a laptop.
 
-Fortunately, someone discovered that the panel from a Dell Alienware M14x can be swapped in with no additional hardware or software modifications. The Alienware panel has the same resolution as the stock display but offers vastly improved viewing angles and color reproduction.
+![Bad Angles](display_viewing_angles.jpg)
+
+*T430 Display Viewing Angles, from [notebookcheck.net](https://www.notebookcheck.net/Review-Lenovo-ThinkPad-T430-Notebook.81802.0.html)*
+
+Fortunately, someone discovered that the panel from a Dell Alienware M14x can be swapped in with no additional hardware or software modifications. The Alienware panel has the same resolution as the stock display at 1600x900, but offers vastly improved viewing angles and color reproduction.
 
 ![LCD Screen](lcd.webp)
 
-There are ways to install a 1080p panel, but doing so requires a shady adapter from eBay, which reportedly can cause screen flickering on some machines. Since I was happy with the stock 1600x900 resolution, I decided to play it safe and stick to the Alienware panel.
+There are ways to install a 1080p panel, but doing so requires a shady adapter from eBay, which reportedly can cause screen flickering on some machines. Since I was fine with the stock resolution, I decided to play it safe and stick to the Alienware panel.
 
-## Firmware Modifications
+## Open Firmware
 
 ![coreboot logo](coreboot-logo.png)
 
 Many ThinkPad enthusiasts choose to flash their systems with an open-source firmware called [coreboot](https://www.coreboot.org/). coreboot (yes, that is the [correct spelling](https://doc.coreboot.org/index.html#spelling-of-coreboot)) replaces the stock firmware and offers several advantages. Because it’s entirely open source, there’s increased transparency into the code running at one of the most privileged levels of the system. Boot times are also improved, as coreboot is leaner than the stock firmware.
 
-Perhaps the biggest advantage, however, is the removal of the hardware whitelist baked into the stock T430 UEFI. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
+Perhaps the biggest advantage, however, is that coreboot removes a hardware whitelist that is baked into the stock T430 UEFI. This whitelist prevents the system from booting if a third-party battery or wireless card is installed. Removing it allows the use of aftermarket batteries and modern Wi-Fi cards.
 
-It’s worth noting that coreboot alone is not a replacement for the stock UEFI. coreboot simply initializes the hardware and then hands control to a payload stored in the firmware. The payload is what actually contains your UEFI or BIOS implementation. The two most popular options are [SeaBIOS](https://github.com/coreboot/seabios) and [edk2](https://github.com/tianocore/edk2), which are open-source implementations of the legacy PC BIOS and the newer UEFI specification, respectively.
+It’s worth noting that coreboot alone is not a replacement for the stock UEFI. coreboot simply initializes the hardware and then hands control to a payload stored in the firmware. The payload is what actually contains your UEFI or BIOS implementation. The two most popular oayload options are [SeaBIOS](https://github.com/coreboot/seabios) and [edk2](https://github.com/tianocore/edk2), which are open-source implementations of the legacy PC BIOS and UEFI specifications, respectively.
 
 Another popular firmware modification is [me_cleaner](https://github.com/corna/me_cleaner). To understand its purpose, you first need to understand the [Intel Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine), or IME. IME is a proprietary microcontroller present on all post-2006 Intel platforms that operates independently of the main CPU and operating system.
 
-IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity, transparent to the user. While IME has legitimate **enterprise** use cases, it has raised significant security and privacy concerns within the open-source community. [4]
+IME enables features such as Intel Active Management Technology (AMT), Intel Boot Guard, and Intel Protected Audio Video Path (PAVP). To function, it requires deep system access, including direct memory access (DMA) and network connectivity, transparent to the user. While IME has legitimate **enterprise** use cases, it has also [raised significant security and privacy concerns](https://en.wikipedia.org/wiki/Intel_Management_Engine#Assertions_that_ME_is_a_backdoor) within the open-source community.
 
 me_cleaner is a tool for neutering IME on Intel-based machines. IME cannot be removed completely due to its tight integration with the boot process, but it can be modified such that it is active **only** during the boot process, effectively disabling it during normal operation.
 
-For the ThinkPad xx30 series, there’s a project called [Skulls](https://github.com/merge/skulls), which bundles all the tools needed to install coreboot with SeaBIOS and apply me_cleaner. It’s essentially a one-stop shop for all the popular firmware mods on xx30 ThinkPads.
+For the ThinkPad xx30 series, there’s a project called [Skulls](https://github.com/merge/skulls), which bundles all the tools needed to install coreboot with SeaBIOS as a payload and apply me_cleaner. It’s essentially a one-stop shop for all the popular firmware mods on xx30 series ThinkPads.
 
 ![Skulls Logo](skulls.jpg)
 
@@ -111,7 +116,7 @@ I was a bit intimidated by the idea of tearing apart my entire system to access 
 
 *Disassembly notes*
 
-Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured with SeaBIOS, which implements the older BIOS standard instead of the newer UEFI standard. For my T430, I wanted to use edk2 instead of SeaBIOS, simply because it is a little more user-friendly. Fortunately, Skulls also unlocks the machine so that you can later install a new BIOS/UEFI through software via the `flashrom` utility instead of tearing the machine apart all over again. After reassembling the laptop and making sure everything still worked, I used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS. I then used `flashrom` to flash this new edk2 image to my motherboard.
+Skulls is by far the easiest way to get coreboot installed on the T430. But it is configured to install SeaBIOS, which implements the older BIOS standard instead of the newer UEFI standard. For my T430, I wanted to use edk2 instead of SeaBIOS, simply because I find it to be more user-friendly. Fortunately, Skulls also unlocks the machine so that you can later install a new BIOS/UEFI through software via the `flashrom` utility instead of tearing it apart all over again. After reassembling the laptop and making sure everything still worked, I used the scripts from [this repository](https://github.com/Thrilleratplay/coreboot-builder-scripts) to compile a new coreboot image with edk2 instead of SeaBIOS. I then used `flashrom` to flash this new edk2 image to my motherboard.
 
 ![edk2 UEFI](edk2.jpg)
 
@@ -155,13 +160,13 @@ The only repair I made to my T430 was replacing the bottom trackpad buttons. The
 
 ## CMOS Replacement
 
-I don't know if the previous owner ever replaced the CMOS battery on my T430, so I decided to do some preventative maintenance and put in a new one since the machine is over a decade old.
+I don't know if the previous owner ever replaced the CMOS battery on my T430, so I decided to do some preventative maintenance and put in a new one since the computer is over a decade old.
 
 ![CMOS Battery](cmos.jpg)
 
 ## Future Plans
 
-There's one final mod that I might do in the future. I found a Tindie seller who makes [3D-printed USB Type-C charging port drop-in replacements](https://www.tindie.com/products/mikepdiy/charging-port-type-c-lenovo-pd-t420-t430/) for the T430. This mod would allow me to charge the T430 using the same USB Type-C charger that I already have for all my other devices.
+There's one final mod that I would like to do in the future. I recently found a Tindie seller who makes [3D-printed USB Type-C charging port drop-in replacements](https://www.tindie.com/products/mikepdiy/charging-port-type-c-lenovo-pd-t420-t430/) for the T430. This mod would allow me to charge the T430 using the same USB Type-C charger that I already have for all my other devices.
 
 ![USB Type-C Charge Port for the T430](usbc-charge-port.jpg)
 
@@ -179,9 +184,9 @@ There are so many other thoughtful touches throughout the machine. Small LEDs on
 
 The process of modifying, customizing, and upgrading the machine has been both fun and rewarding. There’s a unique sense of accomplishment in reviving an old piece of hardware and breathing new life into a machine that most people would consider obsolete. I take pride in knowing my machine inside and out and having the confidence to repair it and maintain it for years to come.
 
-## Sources
+## Credits
 
-1. [THINK: A brief history of ThinkPads, from IBM to Lenovo](https://www.notebookcheck.net/THINK-A-brief-history-of-ThinkPads-from-IBM-to-Lenovo.418728.0.html)
-2. [What was the last truly great Thinkpad?](https://www.reddit.com/r/thinkpad/comments/p47j37/what_was_the_last_truly_great_thinkpad/)
-3. [How Toyota Got the 2024 Land Cruiser So Wrong — Full Review & History — Jason Cammisa on the ICONS](https://www.youtube.com/watch?v=zlhSgUh_6VY)
-4. [Intel Management Engine - Wikipedia](https://en.wikipedia.org/wiki/Intel_Management_Engine)
+- [The Definitive T430 Modding Guide](https://medium.com/@n4ru/the-definitive-t430-modding-guide-3dff3f6a8e2e)
+- [T430 Modding](https://charlieruss.net/posts/thinkpad-modding/)
+- [Installing Coreboot on my Thinkpad T430... In a forest](https://www.youtube.com/watch?v=lpGf00qFHkc)
+- [awesome-thinkpag-mods](https://github.com/mxxivcz/awesome-thinkpad-mods)
