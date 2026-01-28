@@ -189,4 +189,4 @@ The process of modifying, customizing, and upgrading the machine has been both f
 - [The Definitive T430 Modding Guide](https://medium.com/@n4ru/the-definitive-t430-modding-guide-3dff3f6a8e2e)
 - [T430 Modding](https://charlieruss.net/posts/thinkpad-modding/)
 - [Installing Coreboot on my Thinkpad T430... In a forest](https://www.youtube.com/watch?v=lpGf00qFHkc)
-- [awesome-thinkpag-mods](https://github.com/mxxivcz/awesome-thinkpad-mods)
+- [awesome-thinkpad-mods](https://github.com/mxxivcz/awesome-thinkpad-mods)
