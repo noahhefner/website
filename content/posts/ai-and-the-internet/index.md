@@ -1,29 +1,26 @@
-+++
-title = "Index"
-date = "2026-01-29T14:53:18-05:00"
-#dateFormat = "2006-01-02" # This value can be configured for per-post date formatting
-author = ""
-authorTwitter = "" #do not include @
-cover = ""
-tags = ["", ""]
-keywords = ["", ""]
-description = ""
-showFullContent = false
-readingTime = false
-hideComments = false
-draft = true
-+++
+---
+title: Seach Agent Optimization
+date: 2026-01-29T14:53:18-05:00
+draft: True
+---
 
 Search Agent Optimization
 
 
 Ideas
 
-With each passing day, AI is finding new mediums to summarize. Copilot can now summarize that three paragraph email from your coworker about the project you're working on. YouTube will happily provide an AI-generated summary of any video on their platform, meaning you don't have to watch a 30 minute video and sit through a baked-in ad read to get the information you need for a research paper. Even Spotify is using AI to generate summaries of previously listened audiobook chapters to help users pick up a story after a hiatus with a new feature called Recap.
+With each passing day, AI is finding new mediums to summarize. Copilot can now summarize your emails, YouTube can summarize the content of any video, Spotify Recap can summarize audiobook chapters, and Google will even summarize the internet for you with its AI Overview. These "AI summary" features seem to be invading every content consuption platform on the internet.
 
-These all sound like great ideas on paper. Why would I waste time engaging with a peice of content when I can get everything I need from the summary? These summaries are being marketed as time-saving tools and in many cases, they can actually be useful. (Spotify Recap sounds like a genuinely cool idea to me.) But there's a hidden side-effect here: AI is slowly but surely inserting itself as a middleman between users and content in every aspect of our lives.
+From the user's perspective, these summaries can be incredibly useful. Why would I spend 30 minutes wathcing a video, reading an article, or browsing a dozen different websites when I can get everything I need from the AI summary? If all you need is information, then a summary of that information is often all you need. In the case of Google's AI Overview, this presents a problem for some websites since users are no longer actually visiting the site. Less site visitors means less advertisement views which means less money for website owners. This is an obvious problem.
 
-Colin and Samir did a fantastic episode 
+But I want to focus on a concept I believe to be far more troublesome. As users become more comfortable with AI summaries and more condifent in the accuracy of said summaries, they are interracting less and less with the source material. All the content we watch, read, and listen to is now being filtered through an AI lense.
+
+Knowing this, let's play out what the future of online content might look like. Let's assume that AI summaries will only become more widespread, invading every aspect of our digital lives. AI chatbots like ChatGPT and Gemini will for some people be the only way they access the internet and information. I will also assume that at some point in the future, AI companies will be forced to pay for the websites that they scrape for information. While users may not view source content directly, at least the original authors will still recieve a kickback for their work.
+
+Under these assumptions, I think it's reasonable to assume that content creators will seek ways to optimize their content for these AI summaries. Instead of optimizing for search engines, content will be optimized for AI agents. What that will look like, I do now know.
+
+Is it possible that AI kills the traditional website? 
+
 
 1. AI layer between users and content
 
@@ -53,6 +50,11 @@ Colin and Samir did a fantastic episode
 
     - ai generated news feeds with political bias
     - 
+
+
+
+
+In an episode titled "The Creator Economy's Abundance Crisis" from The Colin and Samir Show, Colin and Samir talk at length about how AI summaries will affect content creators. The crux of their take is that as a video creator specifically, it is no longer good enough to simply provide information to the viewer. To be successful on YouTube in the AI era, you have to provide a unique "tone, style, and perspective" in your video that can't be communicated through an AI summary. In other words, make content that can't be summarized.
 
 Sources:
 
