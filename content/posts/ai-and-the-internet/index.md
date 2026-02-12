@@ -4,7 +4,7 @@ date: 2026-02-12T12:30:18-05:00
 cover: hal.jpg
 ---
 
-## AI and the Summarization of Content
+## AI Summaries
 
 The [summarization of digital media](https://www.youtube.com/shorts/62FryBYrZzA) has become one of the most prominent and impactful applications of artificial intelligence in recent months. YouTube has introduced a feature that instantly generates a text summary of any video on the platform, enabling users to extract  information from a video without actually watching it. Other platforms are implementing content summary features as well. Microsoft Copilot can summarize your emails, [Spotify Recap](https://newsroom.spotify.com/2025-11-13/audiobook-recaps-beta-test/) can summarize audiobook chapters, and Google will even summarize the entire internet for you with AI Overviews. These “AI summary” features seem to be invading every content consumption platform on the internet.
 
