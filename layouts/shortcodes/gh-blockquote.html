@@ -1,0 +1,13 @@
+{{ $type := .Get "type" | lower }}
+{{ $supportedTypes := slice "important" "note" "warning" }}
+
+{{ if in $supportedTypes $type }}
+  <div class="gh-blockquote gh-{{ $type | safeHTML }}">
+    <span class="font-bold">{{ $type | title }}</span>
+    <br>
+
+    {{ .Inner | markdownify }}
+  </div>
+{{ else }}
+  {{ errorf "Invalid parameter: '%s'. Supported values: %q." $type $supportedTypes }}
+{{ end }}
