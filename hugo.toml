@@ -1,5 +1,4 @@
 baseurl = "/"
-languageCode = "en-us"
 theme = "terminal"
 pagination.pagerSize = 5
 
@@ -63,7 +62,6 @@ pagination.pagerSize = 5
 
 [languages]
   [languages.en]
-    languageName = "English"
     title = "Noah Hefner's Blog"
 
     [languages.en.params]
