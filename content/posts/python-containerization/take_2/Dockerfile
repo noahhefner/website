@@ -1,5 +1,5 @@
 # Start from Python Alpine image
-FROM python:3.13-alpine3.22
+FROM python:3.14-alpine3.23
 
 # Set work directory
 WORKDIR /app

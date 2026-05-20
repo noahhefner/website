@@ -1,7 +1,7 @@
 # -----------------------
 # Stage 1: Build
 # -----------------------
-FROM ghcr.io/astral-sh/uv:python3.13-alpine AS builder
+FROM ghcr.io/astral-sh/uv:python3.14-alpine AS builder
 
 # Set work directory
 WORKDIR /app
@@ -9,8 +9,8 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Copy pyproject.toml
-COPY take_6/pyproject.toml .
+# Copy pyproject.toml and uv.lock
+COPY take_6/pyproject.toml take_6/uv.lock .
 
 # Install Python modules
 RUN uv sync --no-cache --no-group dev
@@ -18,7 +18,7 @@ RUN uv sync --no-cache --no-group dev
 # -----------------------
 # Stage 2: Runtime
 # -----------------------
-FROM python:3.13-alpine3.22 AS runner
+FROM python:3.14-alpine3.23 AS runner
 
 # Set work directory
 WORKDIR /app

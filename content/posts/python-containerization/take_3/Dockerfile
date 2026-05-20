@@ -1,5 +1,5 @@
 # Start from uv image
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.14-alpine
 
 # Set work directory
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # Create virtual environment
 RUN uv venv
 
-# Copy pyproject.toml
-COPY take_3/pyproject.toml .
+# Copy pyproject.toml and uv.lock
+COPY take_3/pyproject.toml take_3/uv.lock .
 
 # Install Python modules
 RUN uv sync --no-cache
