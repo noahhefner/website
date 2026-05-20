@@ -91,21 +91,21 @@ This program is a bit contrived, but the important part is that it makes use of 
 
 Let's also assume our Python project makes use of some developer dependencies like code linters and formaters:
 
-- `black` for code formatting
+- `ruff` for code formatting
+- `ty` for code linting
 - `isort` for sorting import statements
-- `autoflake` for removing unused imports
 
 If we use `pip` to manage our packages, we might generate a `requirments.txt` file for the project, which would look like this:
 
 ```plaintext
 # take_1/requirments.txt
 
-pika==1.3.2
-pymongo==4.14.1
-structlog==25.4.0
-black==25.1.0
-isort==6.0.1
-autoflake==2.3.1
+pika==1.4.0
+pymongo==4.17.0
+structlog==25.5.0
+ruff==0.15.13
+ty==0.0.38
+isort==8.0.1
 ```
 
 ## Take One - Containerization with Ubuntu
@@ -122,7 +122,7 @@ We will start with the following `Dockerfile`:
 # take_1/Dockerfile
 
 # Start from Ubuntu
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Install Python, pip, and venv
 RUN apt-get update && apt-get install -y \
@@ -152,7 +152,7 @@ COPY src/main.py main.py
 CMD ["python", "main.py"]
 ```
 
-In this Dockerfile, Ubuntu 24.04 is used as the base image. Next, we install the Python interpreter, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, and then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it.
+In this Dockerfile, Ubuntu 26.04 is used as the base image. Next, we install the Python interpreter, `pip`, and `venv`. Then, we create a Python virtual environment using `venv`, add it to our path, and then install our Python dependencies from the `requirments.txt` file using `pip`. Finally, we copy over the `main.py` file and execute it.
 
 To build our image, we can use the `docker build` command:
 
@@ -163,105 +163,25 @@ docker build -f take_1/Dockerfile -t take_one:latest .
 We get the following output:
 
 ```plaintext
-[+] Building 115.1s (12/12) FINISHED                                                          docker:default
- => [internal] load build definition from Dockerfile.take_one                                           0.1s
- => => transferring dockerfile: 665B                                                                    0.0s
- => [internal] load metadata for docker.io/library/ubuntu:24.04                                         2.2s
- => [internal] load .dockerignore                                                                       0.1s
- => => transferring context: 2B                                                                         0.0s
- => [1/7] FROM docker.io/library/ubuntu:24.04@sha256:7c06e91f61fa88c08cc74f7e1b7c69ae24910d745357e0dfe  6.9s
- => => resolve docker.io/library/ubuntu:24.04@sha256:7c06e91f61fa88c08cc74f7e1b7c69ae24910d745357e0dfe  0.2s
- => => sha256:7c06e91f61fa88c08cc74f7e1b7c69ae24910d745357e0dfe1d2c0322aaf20f9 6.69kB / 6.69kB          0.0s
- => => sha256:35f3a8badf2f74c1b320a643b343536f5132f245cbefc40ef802b6203a166d04 424B / 424B              0.0s
- => => sha256:e0f16e6366fef4e695b9f8788819849d265cde40eb84300c0147a6e5261d2750 2.29kB / 2.29kB          0.0s
- => => sha256:b71466b94f266b4c2e0881749670e5b88ab7a0fd4ca4a4cdf26cb45e4bde7e4e 29.72MB / 29.72MB        1.3s
- => => extracting sha256:b71466b94f266b4c2e0881749670e5b88ab7a0fd4ca4a4cdf26cb45e4bde7e4e               4.7s
- => [internal] load build context                                                                       0.3s
- => => transferring context: 1.45kB                                                                     0.0s
- => [2/7] RUN apt-get update && apt-get install -y     python3     python3-pip     python3-venv        75.2s
- => [3/7] WORKDIR /app                                                                                  0.1s 
- => [4/7] RUN python3 -m venv /opt/venv                                                                 5.6s 
- => [5/7] COPY requirements.txt .                                                                       0.2s 
- => [6/7] RUN pip install --no-cache-dir -r requirements.txt                                            9.0s 
- => [7/7] COPY src/main.py main.py                                                                      0.2s 
- => exporting to image                                                                                 15.1s 
- => => exporting layers                                                                                15.0s 
- => => writing image sha256:7f305fbf83187c0a6ac0ec601f15ceab932f63433e63d5deec5cbb7020e02306            0.0s
+update
 ```
 
 Notice from the first line of this output that the image took almost **two minutes** to build.
 
 ```plaintext
-[+] Building 115.1s (12/12) 
+update
 ```
 
 We can also check the size of the image using the `docker image inspect` command:
 
 ```json
-[
-    {
-        "Id": "sha256:7f305fbf83187c0a6ac0ec601f15ceab932f63433e63d5deec5cbb7020e02306",
-        "RepoTags": [],
-        "RepoDigests": [],
-        "Parent": "",
-        "Comment": "buildkit.dockerfile.v0",
-        "Created": "2025-08-31T13:59:26.046247413-04:00",
-        "DockerVersion": "",
-        "Author": "",
-        "Architecture": "amd64",
-        "Os": "linux",
-        "Size": 589982747,
-        "GraphDriver": {
-            "Data": {
-                "LowerDir": "/var/lib/docker/overlay2/x7evtxn5ko5prg38egtj3108v/diff:/var/lib/docker/overlay2/6vy6xzzttwioqkwmui2p32t3x/diff:/var/lib/docker/overlay2/nha5u6beay7qkhvxrh75uxb9p/diff:/var/lib/docker/overlay2/d42zkclw5dpznkknw9faw9y9g/diff:/var/lib/docker/overlay2/ni6ccxrx41m6qzd76w9668ab8/diff:/var/lib/docker/overlay2/f3a841789a23e8df2012e3f4ee27d16ccde44036bda182f9d24e65bb3e45b75b/diff",
-                "MergedDir": "/var/lib/docker/overlay2/6ah4uigim2ih9b1xs6190nz7n/merged",
-                "UpperDir": "/var/lib/docker/overlay2/6ah4uigim2ih9b1xs6190nz7n/diff",
-                "WorkDir": "/var/lib/docker/overlay2/6ah4uigim2ih9b1xs6190nz7n/work"
-            },
-            "Name": "overlay2"
-        },
-        "RootFS": {
-            "Type": "layers",
-            "Layers": [
-                "sha256:cd9664b1462ea111a41bdadf65ce077582cdc77e28683a4f6996dd03afcc56f5",
-                "sha256:490549fd05a0bfdb9cffdf068573eb00dd9e2446660a635dc75d7cdc7cd7fb35",
-                "sha256:49e8685bade2abd47164d4fe00dee489ecd62d33d6599c14791bc1575487a8b7",
-                "sha256:d86e36a128358d1833aebfd11bdfdc331c95ec796d8e05dce1330b50095357dc",
-                "sha256:42ea22f9e492e8e3550c4deb054060a0b3573b894566e58fd9060242209af0a7",
-                "sha256:b3f0a12bdf6589aff587f4a80de52c4ef9e2030f038f762ca5338b70d37b7773",
-                "sha256:04ab7ffdb4b43685b118753bc2faa48a29831f7183484c12eb42ca37b3beeff1"
-            ]
-        },
-        "Metadata": {
-            "LastTagTime": "0001-01-01T00:00:00Z"
-        },
-        "Config": {
-            "ArgsEscaped": true,
-            "Cmd": [
-                "python",
-                "main.py"
-            ],
-            "Entrypoint": null,
-            "Env": [
-                "PATH=/opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-            ],
-            "Labels": {
-                "org.opencontainers.image.ref.name": "ubuntu",
-                "org.opencontainers.image.version": "24.04"
-            },
-            "OnBuild": null,
-            "User": "",
-            "Volumes": null,
-            "WorkingDir": "/app"
-        }
-    }
-]
+update
 ```
 
 You can see by the `Size` field (measured in bytes) that the image is over **half a gigabyte**!
 
 ```json
-"Size": 589982747
+update
 ```
 
 ## Take Two - Choosing the right base image
