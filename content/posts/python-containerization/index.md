@@ -27,7 +27,9 @@ This article will focus more heavily on the first two points, but I will include
 
 All code for this article is available in my GitHub website repository [here](https://github.com/noahhefner/website/tree/main/content/posts/python-containerization). If you're following along, all the commands in this article are run from the directory `content/posts/python-containerization` in that repository.
 
-*Sidenote: For benchmarking / testing purposes, the Docker build cache was cleared in between builds for each of these images.*
+{{< gh-blockquote type="note" >}}
+For benchmarking / testing purposes, the Docker build cache was cleared in between builds for each of these images.
+{{< /gh-blockquote >}}
 
 ## Example Project
 
