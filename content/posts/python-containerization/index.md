@@ -280,7 +280,7 @@ You can see by the `Size` field (measured in bytes) that the image is over **qua
 
 ## Take Two - Choosing the right base image
 
-Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a lengthy list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 500MB.
+Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a lengthy list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 200MB.
 
 An easy way to avoid pulling in all those extra packages is to start from a slim, purpose-built base image. For this demo, we’ll use `python:3.14-alpine3.23`, an Alpine-based image with the Python interpreter and other tooling preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
 
@@ -302,7 +302,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements.txt
-COPY take_1/requirements.txt .
+COPY take_2/requirements.txt .
 
 # Install Python modules
 RUN pip install --no-cache-dir -r requirements.txt
