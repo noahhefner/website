@@ -282,7 +282,7 @@ You can see by the `Size` field (measured in bytes) that the image is over **qua
 
 Why was our first Docker image so large? Although the Ubuntu base image today is surprisingly compact—typically around 70MB—installing Python via `apt` also pulls in a lengthy list of dependencies, including build tools, libraries, and system utilities. This cascade of packages can cause the final image to balloon well past 500MB.
 
-An easy way to avoid pulling in all those extra packages is to start from a slim, purpose-built base image. For this article, we’ll use `python:3.14-alpine3.23`, an Alpine-based image with the Python interpreter and other tooling preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
+An easy way to avoid pulling in all those extra packages is to start from a slim, purpose-built base image. For this demo, we’ll use `python:3.14-alpine3.23`, an Alpine-based image with the Python interpreter and other tooling preinstalled. Because it contains only the essentials, it’s much smaller than the Ubuntu + `apt` approach and should also speed up our build times.
 
 Let's rebase our `Dockerfile` on `python:3.14-alpine3.23`:
 
@@ -332,7 +332,7 @@ Additionally, we end up with a much smaller resulting image, just 52MB. (Also om
 "Size": 51921311,
 ```
 
-From a security perspective, we're also reducing our attack surface. By stripping away unnecessary packages, we leave fewer potential vulnerabilities inside the container. This is one key advantage of using purpose-built base images such as `python:alpine` or `python:slim`—they are designed to be lightweight, fast to build, and easier to secure.
+From a security perspective, we're also reducing our attack surface. By stripping out unnecessary packages, we leave fewer potential vulnerabilities inside the container. This is one key advantage of using purpose-built base images such as `python:alpine` or `python:slim`—they are designed to be lightweight, fast to build, and easier to secure.
 
 For small applications with minimal dependencies, this `Dockerfile` is already quite solid. For larger projects with many dependencies, however, there’s still room for improvement. In the next step, we’ll swap out `pip` for a faster dependency resolution tool to gain some additional speed.
 
@@ -625,17 +625,17 @@ demo
 
 ## Take 7 - Exclude Build Artifacts with `.dockerignore`
 
-Python developers are all familiar with the __pycache__ directories that are generated when running Python code. For the uninitiated, these directories contain Python bytecode that is consumed by the Python interpreter at runtime. They act as a cache between runs so the interpreter does not have to recompile the source code every time the application executes.
+Python developers are all familiar with the `__pycache__` directories that are generated when running Python code. For the uninitiated, these directories contain Python bytecode that is consumed by the Python interpreter at runtime. They act as a cache between runs so the interpreter does not have to recompile the source code every time the application executes.
 
-Development tools like Ruff and Pytest also generate temporary build artifacts (such as .ruff_cache and .pytest_cache, respectively) to reduce duplicative work across runs.
+Development tools like Ruff and Pytest also generate temporary build artifacts (such as `.ruff_cache` and `.pytest_cache`, respectively) to reduce duplicative work across runs.
 
 None of these files are needed at runtime, but they can inadvertently end up in a Docker image during the build process. These additional files can increase build time, introduce potential security concerns, and increase the final image size. Therefore, it is considered a best practice to exclude them from the image.
 
-To accomplish this, a .dockerignore file can be used. A .dockerignore file works similarly to a .gitignore file. It sits at the root of a Python project and instructs Docker BuildKit which files to ignore when executing COPY commands in a Dockerfile. No changes are required to the Dockerfile for a .dockerignore file to take effect.
+To accomplish this, a `.dockerignore` file can be used. A `.dockerignore` file works similarly to a `.gitignore` file. It sits at the root of a Python project and instructs Docker BuildKit which files to ignore when executing `COPY` commands in a `Dockerfile`. No changes are required to the `Dockerfile` for a `.dockerignore` file to take effect.
 
-A .dockerignore file may or may not be necessary depending on the build process. For example, in CI/CD pipelines where the source code is freshly cloned for each build, no build artifacts will typically be present to exclude (assuming the .gitignore file is configured properly).
+A `.dockerignore` file may or may not be necessary depending on the build process. For example, in CI/CD pipelines where the source code is freshly cloned for each build, no build artifacts will typically be present to exclude (assuming the `.gitignore` file is configured properly).
 
-Because containerization strategies and build pipelines vary significantly between projects, no benchmarks are included here. The impact of these optimizations depends heavily on factors such as application size, dependency footprint, build frequency, and the deployment environment.
+Because containerization strategies and build pipelines vary significantly between projects, no benchmarks are included here. The impact of these optimizations depends heavily on factors such as application size, dependency footprint, build frequency, and the deployment environment. Below is an example `.dockerignore` taylored for Python projects.
 
 ```gitignore
 # take_7/.dockerignore
@@ -661,11 +661,242 @@ In December of 2025, Docker [opened their Hardened Image (DHI) program the gener
 
 If your project operates in an environment where security is not just a priority but a requirement—whether due to regulatory constraints, enterprise risk tolerance, or the need for strict supply chain integrity—Docker Hardened Images offer a compelling foundation. 
 
-Shown below is an updated version of the `Dockerfile` from take 6. There is even a hardened version of the `uv` image, making the migration seemless and painless. Note that since Docker Hardened Images run as a non-root user by default, we no longer need those instructions in the `Dockerfile`.
+Shown below is an updated `Dockerfile` using Docker Hardened Images. There is even a hardened version of the `uv` image, making the migration seemless and painless. **There is not an Alpine-based Docker Hardened Image for `uv` at the time of writing, so I have used Debian-based images in both the `builder` and `runner` stages.**
 
 ```dockerfile
+# bonus/Dockerfile.dhi
 
+# -----------------------
+# Stage 1: Build
+# -----------------------
+FROM dhi.io/uv:0-debian13-dev AS builder
+
+# Set work directory
+WORKDIR /app
+
+# Create virtual environment
+RUN uv venv
+
+# Copy pyproject.toml and uv.lock
+COPY bonus/pyproject.toml bonus/uv.lock .
+
+# Install Python modules
+RUN uv sync --no-cache --no-group dev
+
+# -----------------------
+# Stage 2: Runtime
+# -----------------------
+FROM dhi.io/python:3 AS runner
+
+# Set work directory
+WORKDIR /app
+
+# Copy venv from builder stage
+COPY --from=builder /app/.venv /app/.venv
+
+# Copy application code
+COPY src/main.py main.py
+
+# Ensure venv is used
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Run the program
+CMD ["python", "main.py"]
 ```
+
+To run a security scan of the image, we can use [Docker Scout](https://docs.docker.com/scout/). Scout will build a software bill of materials (SBOM) for our image, then compare it against a continuously updated database of vulnerabilities. For this demonstration, I'll use the `cves` argument to reveal any CVEs affecting the image. After the image is built, we can run Scout with the following command syntax:
+
+```bash
+docker scout cves image-name:image-tag
+```
+
+Running Scout on our hardened image, we see that there are three CVEs affecting our image at the time of writing:
+
+```plaintext
+docker scout cves bonus-dhi:latest
+    ✓ Image stored for indexing
+    ✓ Indexed 51 packages
+    ✓ Provenance obtained from attestation
+    ✓ Pulled
+    ✓ SBOM obtained from attestation, 47 packages found
+    ✓ Provenance obtained from attestation
+    ✓ VEX statements obtained from attestation
+    ✗ Detected 2 vulnerable packages with a total of 3 vulnerabilities
+
+
+## Overview
+
+                   │               Analyzed Image               
+───────────────────┼────────────────────────────────────────────
+ Target            │  bonus-dhi:latest                          
+   digest          │  b35341a5004f                              
+   platform        │ linux/amd64                                
+   provenance      │ git@github.com:noahhefner/website.git      
+                   │  37a852542ac87a7f7d93e5aa156a0914bec97879  
+   vulnerabilities │    0C     0H     2M     1L                 
+   size            │ 26 MB                                      
+   packages        │ 51                                         
+                   │                                            
+ Base image        │  dhi.io/python:3                           
+                   │  da6336280bd2                              
+
+
+## Packages and Vulnerabilities
+
+   0C     0H     2M     0L  python 3.14.5
+pkg:dhi/python@3.14.5
+
+    ✗ MEDIUM CVE-2026-7210
+      https://scout.docker.com/v/CVE-2026-7210
+      Affected range : >=0                                                                                   
+      Fixed version  : not fixed                                                                             
+      VEX            : under investigation  Docker Scout                                                     
+                     : Docker Hardened Images <dhi@docker.com>                                               
+                     : Waiting for upstream CPython fix. See https://github.com/python/cpython/issues/149018 
+    
+    ✗ MEDIUM CVE-2026-8328
+      https://scout.docker.com/v/CVE-2026-8328
+      Affected range : >=0       
+      Fixed version  : not fixed 
+    
+
+   0C     0H     0M     1L  sqlite3 3.46.1-7+deb13u1
+pkg:deb/debian/sqlite3@3.46.1-7%2Bdeb13u1?os_distro=trixie&os_name=debian&os_version=13
+
+    ✗ LOW CVE-2025-70873
+      https://scout.docker.com/v/CVE-2025-70873
+      Affected range : >0                                                                                         
+      Fixed version  : not fixed                                                                                  
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : under investigation  Docker Scout                                                          
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+                     : Waiting for upstream fix                                                                   
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+      VEX            : not affected [vulnerable code not present]  Docker Scout                                   
+                     : zipfile extension is not built for Debian binary package builds (Debian security tracker). 
+                     : Docker Hardened Images <dhi@docker.com>                                                    
+    
+
+
+3 vulnerabilities found in 2 packages
+  CRITICAL  0 
+  HIGH      0 
+  MEDIUM    2 
+  LOW       1 
+
+
+What's next:
+    View base image update recommendations → docker scout recommendations bonus-dhi:latest
+```
+
+Not bad! Let's compare this to an image based on standard (non-hardened) Debian. To make the comparison more apples-to-apples, I'll build a trixie-based image using the following `Dockerfile`:
+
+```dockerfile
+# bonus/Dockerfile.debian
+
+# -----------------------
+# Stage 1: Build
+# -----------------------
+FROM ghcr.io/astral-sh/uv:trixie AS builder
+
+# Set work directory
+WORKDIR /app
+
+# Create virtual environment
+RUN uv venv
+
+# Copy pyproject.toml and uv.lock
+COPY bonus/pyproject.toml bonus/uv.lock .
+
+# Install Python modules
+RUN uv sync --no-cache --no-group dev
+
+# -----------------------
+# Stage 2: Runtime
+# -----------------------
+FROM python:3.14-trixie AS runner
+
+# Set work directory
+WORKDIR /app
+
+# Copy venv from builder stage
+COPY --from=builder /app/.venv /app/.venv
+
+# Copy application code
+COPY src/main.py main.py
+
+# Create a non-root user and group
+RUN groupadd --system demo && \
+    useradd --system --gid demo --create-home demo
+
+# Give the non-root user permission to run the script
+RUN chown demo:demo /app/main.py && \
+    chmod u+rwx /app/main.py
+
+# Ensure venv is used
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Switch to non-root user
+USER demo
+
+# Run the program
+CMD ["python", "main.py"]
+```
+
+After scanning this image with Scout, we see a *few* more CVEs reported:
+
+```plaintext
+248 vulnerabilities found in 46 packages
+  CRITICAL     4   
+  HIGH         20  
+  MEDIUM       21  
+  LOW          183 
+  UNSPECIFIED  20 
+```
+
+I'd say thats a pretty big improvement!
+
+To reiterate, whether or not you should use Docker Hardened Images really comes down to your organization’s threat model and risk tolerance. For hobby projects and internal tools, standard base images combined with good patch hygiene are perfectly adequate. But for teams operating in regulated industries, handling sensitive data, or maintaining strict supply chain security requirements, the dramatically reduced vulnerability footprint offered by Docker Hardened Images can meaningfully reduce operational risk.
 
 ## Wrap Up
 
@@ -678,7 +909,9 @@ In summary:
 - **Exclude development dependencies** (e.g., formatters, linters) from the final image. Tools that support `pyproject.toml`, such as `uv` or `poetry`, make this easy by organizing dependencies into groups.
 - Apply **multi-stage builds** to separate environment setup from runtime execution, keeping the final image clean and minimal.
 - Run as a **non-root user** to reduce the risk of privilege escalation if the container is compromised.
+- If your threat model calls for it, make use of **Docker Hardened Images** to reduce your attack surface and tighten supply chain security.
 
 ## Changelog
 
+- **26 May 2026**: Add `.dockerignore` notes (take 7) and bonus Docker Hardened Images section.
 - **20 May 2026**: Fixed typos in Docker build commands, updated package versions, use different dev dependencies, add uv lock file to build commands.
