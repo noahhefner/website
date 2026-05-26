@@ -475,7 +475,7 @@ The amount of time and image size saved with this technique will vary from proje
 
 ## Take Five - Removing Build Tools
 
-In Take Three, we sped up the dependency resolution process by swapping `pip` for `uv`. While this did reduce the build time, it also **increased** the total image size. This is because the `uv` binary itself is ~40MB in size at the time of writing. Ironically, we can reduce the total image size by *removing* `uv` from the image. We only need `uv` to configure the virtual environment, so we can safely remove it from the final image.
+In Take Three, we sped up the dependency resolution process by swapping `pip` for `uv`. While this did reduce the build time, it also **increased** the total image size. This is because the final image contains `uv` binary, which is about 40MB in size at the time of writing. We can reduce the final image size by *removing* `uv` from the image. `uv` is not needed at run time, so we can safely remove it from the image.
 
 We can accomplish this by splitting our Dockerfile into two stages. This strategy is commonly referred to as a [multi-stage build](https://docs.docker.com/build/building/multi-stage/).
 
@@ -550,7 +550,7 @@ Stripping `uv` from the final image provides yet another reduction in the contai
 
 ## Take Six - Running as a Non-Root User
 
-By default, containers run as the `root` user. If we run a shell inside our Take Five image and check the current user, we can verify this behavior:
+By default, Docker containers run as the `root` user. If we run a shell inside our Take Five image and check the current user, we can verify this behavior:
 
 ```plaintext
 docker run -it take_five:latest sh
@@ -559,7 +559,7 @@ root
 /app #
 ```
 
-Running as root inside a container is [discouraged](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is ever compromised, the attacker would immediately have elevated privileges within the container. A simple safeguard is to create a dedicated non-root user and run the application as that user instead.
+Running as root inside a container is [discouraged](https://www.docker.com/blog/understanding-the-docker-user-instruction/). If the container is compromised, the attacker would immediately have elevated privileges within the container. A simple safeguard is to create a dedicated non-root user and run the application as that user instead.
 
 We can update the `runner` stage of our Dockerfile to create a non-root user called `demo`. We will also add commands to give that user ownership and execution rights on the `main.py` file. Finally, the `USER` command will switch to the `demo` user before executing the script.
 
@@ -621,6 +621,38 @@ docker run -it take_six:latest sh
 /app $ whoami
 demo
 /app $ 
+```
+
+## Take 7 - Exclude Build Artifacts with `.dockerignore`
+
+Python developers are all familiar with the __pycache__ directories that are generated when running Python code. For the uninitiated, these directories contain Python bytecode that is consumed by the Python interpreter at runtime. They act as a cache between runs so the interpreter does not have to recompile the source code every time the application executes.
+
+Development tools like Ruff and Pytest also generate temporary build artifacts (such as .ruff_cache and .pytest_cache, respectively) to reduce duplicative work across runs.
+
+None of these files are needed at runtime, but they can inadvertently end up in a Docker image during the build process. These additional files can increase build time, introduce potential security concerns, and increase the final image size. Therefore, it is considered a best practice to exclude them from the image.
+
+To accomplish this, a .dockerignore file can be used. A .dockerignore file works similarly to a .gitignore file. It sits at the root of a Python project and instructs Docker BuildKit which files to ignore when executing COPY commands in a Dockerfile. No changes are required to the Dockerfile for a .dockerignore file to take effect.
+
+A .dockerignore file may or may not be necessary depending on the build process. For example, in CI/CD pipelines where the source code is freshly cloned for each build, no build artifacts will typically be present to exclude (assuming the .gitignore file is configured properly).
+
+Because containerization strategies and build pipelines vary significantly between projects, no benchmarks are included here. The impact of these optimizations depends heavily on factors such as application size, dependency footprint, build frequency, and the deployment environment.
+
+```gitignore
+# take_7/.dockerignore
+
+# Common Python Build Artifacts
+.venv
+__pycache__
+.ruff_cache
+.pytest_cache
+
+# Other common files and directories you might want to exclude
+node_modules
+.git
+.env
+*.log
+*.tmp
+*.db
 ```
 
 ## Wrap Up
