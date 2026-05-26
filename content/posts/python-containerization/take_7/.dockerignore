@@ -1,0 +1,12 @@
+# Common Python Build Artifacts
+.venv
+__pycache__
+.ruff_cache
+.pytest_cache
+
+# Other common files you might want to exclude
+node_modules
+.env
+*.log
+*.tmp
+*.db
