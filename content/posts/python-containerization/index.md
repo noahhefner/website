@@ -655,6 +655,18 @@ node_modules
 *.db
 ```
 
+## Bonus: Docker Hardened Images
+
+In December of 2025, Docker [opened their Hardened Image (DHI) program the general public](https://www.docker.com/blog/docker-hardened-images-for-every-developer/). [Docker Hardened Images](https://docs.docker.com/dhi/features/) are minimal, secure, and production-ready container images maintained by Docker, designed to reduce vulnerabilities and streamline compliance. They emphasize security by default through features like near-zero CVEs, reduced attack surface, non-root execution, hardened packages, and full transparency via signed SBOMs and provenance metadata.
+
+If your project operates in an environment where security is not just a priority but a requirement—whether due to regulatory constraints, enterprise risk tolerance, or the need for strict supply chain integrity—Docker Hardened Images offer a compelling foundation. 
+
+Shown below is an updated version of the `Dockerfile` from take 6. There is even a hardened version of the `uv` image, making the migration seemless and painless. Note that since Docker Hardened Images run as a non-root user by default, we no longer need those instructions in the `Dockerfile`.
+
+```dockerfile
+
+```
+
 ## Wrap Up
 
 In this article, we explored several strategies for optimizing Docker images when running Python applications. By reducing image size and prioritizing faster build times, we created a compact and more secure container well-suited for Python codebases.

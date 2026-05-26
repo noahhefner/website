@@ -1,6 +1,6 @@
 # Shortcuts for building the images for this article
 
-.PHONY: all clean one
+.PHONY: all clean one two three four five six bonus
 
 all:
 
@@ -17,6 +17,8 @@ all:
 	$(MAKE) five
 	$(MAKE) clean
 	$(MAKE) six
+	$(MAKE) clean
+	$(MAKE) bonus
 	@echo "Done!"
 
 clean:
@@ -60,3 +62,9 @@ six:
 	@echo "Building Docker image for take six..."
 	docker build -f take_6/Dockerfile -t take_six:latest .
 	@echo "Done with take six image!"
+
+bonus:
+
+	@echo "Building Docker image for bonus..."
+	docker build -f bonus/Dockerfile -t bonus:latest .
+	@echo "Done with take bonus image!"
