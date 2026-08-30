@@ -11,9 +11,9 @@ draft: true
 
 I manage the servers in my homelab exclusively through the command line. Whether I'm managing Docker containers, performing routine system updates, or organizing files (like movies for Jellyfin), it's almost always over SSH with Bash.
 
-As a developer, I'm no stranger to the command line. I open a terminal every single day for one reason or another. But with the shear number of CLI programs I work with, I can't remember every flag and every argument for every tool. There are of course the `man` pages for researching how to use a tool. Or for a faster, "this is probably what you're looking for" tool, there is `tldr`, which gives you an overview of the tool in a few sentences along with examples of common use cases. 
+As a developer, I'm no stranger to the command line. I open a terminal every single day for one reason or another. But with the shear number of CLI programs I work with, I can't remember every flag and every argument for every tool. There are of course the `man` pages for researching how to use a tool. Or for a faster, "this is probably what you're looking for" utility, there is `tldr`, which gives you an overview of the program you're interrested in along with multiple examples of common use cases. 
 
-But while I am [cosplaying as a sysadmin](https://www.jeffgeerling.com/blog/2022/cosplaying-sysadmin/) with my homelab, I am frequently in need of a bespoke, weird command to do something very specific on the system. In these instances, I usually need to Google "how do I XYZ", or in current year, ask an AI.
+But while I am [cosplaying as a sysadmin](https://www.jeffgeerling.com/blog/2022/cosplaying-sysadmin/) with my homelab, I am frequently in need of a bespoke, weird command to do something very specific on the system. In these instances, I usually need to flip over to my browser and Google "how do I XYZ", or in current year, ask an AI.
 
 For example, I recently needed to stop all my running Docker containers, except one. A quick prompt to Chat Gippity and I got back the following command that does just that:
 
