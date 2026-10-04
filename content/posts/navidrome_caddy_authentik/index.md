@@ -40,25 +40,27 @@ Conveniently, Authentik also has a generalized [written guide](https://docs.goau
 
 *.noahhefner.info {
 
-  @navidrome host navidrome.noahhefner.info
-  handle @navidrome {
-    route {
-      # Authentik embedded outpost
-      reverse_proxy /outpost.goauthentik.io/* http://authentik-server:9000
+	@navidrome host navidrome.noahhefner.info
+	handle @navidrome {
+		route {
+			# Remove any client-supplied user header
+			request_header -Remote-User
 
-      # Protect everything except Navidrome's public/API paths
-      @protected not path /share/* /rest/*
+			# Authentik embedded outpost
+			reverse_proxy /outpost.goauthentik.io/* http://authentik-server:9000
 
-      # Send request clone to Authentik server
-      forward_auth @protected http://authentik-server:9000 {
-        uri /outpost.goauthentik.io/auth/caddy
-        copy_headers X-Authentik-Username>Remote-User
-      }
+			# Protect everything except Navidrome's public/API paths
+			@protected not path /share/* /rest/*
 
-      # Navidrome
-      reverse_proxy navidrome:4533
-    }
-  }
+			forward_auth @protected http://authentik-server:9000 {
+				uri /outpost.goauthentik.io/auth/caddy
+				copy_headers X-Authentik-Username>Remote-User
+			}
+
+			# Navidrome
+			reverse_proxy navidrome:4533
+		}
+	}
  
 }
 ```
